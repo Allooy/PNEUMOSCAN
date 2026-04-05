@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import api from '../api';
 import { Loader2, Eye, Calendar, User, FileDigit, Plus, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function HistoryPage() {
+    usePageTitle('Case History');
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const [filter, setFilter] = useState('All');

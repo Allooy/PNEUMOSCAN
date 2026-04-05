@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../api';
 import { Loader2, AlertTriangle, CheckCircle, HelpCircle, Eye, EyeOff, Download, Share2, Printer, Activity, Mic, MicOff, BrainCircuit, BarChart, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function CaseResult() {
     const { id } = useParams();
@@ -41,6 +42,12 @@ export default function CaseResult() {
 
     const caseData = temporaryData || fetchedData;
     const isLoading = isQueryLoading && !temporaryData;
+
+    // Dynamic title: update once case data is available
+    const caseTitle = caseData
+        ? (id === 'temporary' ? 'Temporary Scan' : `Case #${id} — ${caseData.ai_result || 'Analysis'}`)
+        : (id === 'temporary' ? 'Temporary Scan' : `Case #${id}`);
+    usePageTitle(caseTitle);
 
     useEffect(() => {
         if (!caseData) return;

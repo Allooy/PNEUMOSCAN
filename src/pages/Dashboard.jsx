@@ -4,8 +4,10 @@ import { Users, FileText, Activity, AlertTriangle, ArrowRight, TrendingUp, Clock
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import api from '../api';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Dashboard() {
+    usePageTitle('Dashboard');
     const { data: stats } = useQuery({
         queryKey: ['dashboard-stats'],
         queryFn: async () => {

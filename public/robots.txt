@@ -1,0 +1,21 @@
+# PNEUMOSCAN — robots.txt
+# https://pneumoscan.com/
+
+User-agent: *
+
+# Allow public landing page
+Allow: /
+
+# Block authenticated/private application routes — these require login and should not be indexed
+Disallow: /dashboard
+Disallow: /upload
+Disallow: /history
+Disallow: /chat
+Disallow: /profile
+Disallow: /cases/
+
+# Block any API paths if ever exposed via same domain
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://pneumoscan.com/sitemap.xml

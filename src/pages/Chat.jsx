@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useChat } from '../context/ChatContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Chat() {
+    usePageTitle('AI Assistant');
     const { messages, setMessages, isTyping, setIsTyping } = useChat();
     const [input, setInput] = useState('');
     const messagesEndRef = useRef(null);

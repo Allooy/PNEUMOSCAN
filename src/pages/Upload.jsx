@@ -5,8 +5,10 @@ import api from '../api';
 import { UploadCloud, FileImage, Sparkles, CheckCircle, FileText, X, Activity, Info, FileWarning, ClipboardList } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function UploadPage() {
+    usePageTitle('Upload X-Ray');
     const [files, setFiles] = useState([]);
     const [patientId, setPatientId] = useState('');
     const [isTemporary, setIsTemporary] = useState(false);

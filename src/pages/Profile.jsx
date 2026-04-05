@@ -5,8 +5,10 @@ import { motion } from 'framer-motion';
 import { User, Mail, Shield, Camera, Save, Activity, LayoutDashboard, KeyRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../api';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Profile() {
+    usePageTitle('Account Settings');
     const { user, setToken } = useAuth();
     const { isDarkMode } = useTheme();
 

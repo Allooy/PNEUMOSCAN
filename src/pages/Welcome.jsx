@@ -4,8 +4,10 @@ import { ArrowRight, Activity, ShieldCheck, Zap, CheckCircle, Brain, Clock, X, S
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Welcome() {
+    usePageTitle(null, 'PNEUMOSCAN | AI-Powered Pneumonia Detection Platform');
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showDemoVideo, setShowDemoVideo] = useState(false);
     const { user } = useAuth();
@@ -28,7 +30,7 @@ export default function Welcome() {
             <div className="absolute top-1/2 left-1/2 -ml-32 -mt-32 w-64 h-64 bg-cyan-400 dark:bg-cyan-900/40 rounded-full blur-3xl opacity-20 animate-blob animation-delay-4000 transition-colors duration-300"></div>
 
             {/* Navigation */}
-            <nav className="relative z-10 px-6 py-6 md:px-12 flex items-center justify-between max-w-7xl mx-auto">
+            <nav aria-label="Main navigation" className="relative z-10 px-6 py-6 md:px-12 flex items-center justify-between max-w-7xl mx-auto">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -48,6 +50,7 @@ export default function Welcome() {
                 >
                     <button
                         onClick={toggleTheme}
+                        aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
                         className="p-2.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
                     >
                         {theme === 'light' ? (
@@ -268,7 +271,7 @@ function InteractiveHero() {
                         exit={{ opacity: 0 }}
                         transition={{ duration: 1.2, ease: "easeInOut" }}
                         className="absolute inset-0 w-full h-full object-cover"
-                        alt="Clinical AI Pipeline"
+                        alt={`PNEUMOSCAN AI clinical dashboard — chest X-ray analysis view ${currentImageIdx + 1}`}
                     />
                 </AnimatePresence>
 
