@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Activity, ShieldCheck, Zap, CheckCircle, Brain, Clock, X, Stethoscope, Mail, KeyRound, AlertCircle, Moon, Sun } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,6 +7,7 @@ import { useTheme } from '../context/ThemeContext';
 
 export default function Welcome() {
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showDemoVideo, setShowDemoVideo] = useState(false);
     const { user } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const navigate = useNavigate();
@@ -93,9 +94,9 @@ export default function Welcome() {
                                 {user ? 'Go to Dashboard' : 'Get Started Now'}
                                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                             </button>
-                            <a href="#features" className="px-8 py-4 rounded-2xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 justify-center flex">
+                            <button onClick={() => setShowDemoVideo(true)} className="px-8 py-4 rounded-2xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 justify-center flex">
                                 View Demo
-                            </a>
+                            </button>
                         </div>
 
                         <div className="mt-12 flex items-center gap-6 text-sm font-medium text-slate-500 dark:text-slate-400 transition-colors duration-300">
@@ -121,45 +122,9 @@ export default function Welcome() {
                         className="lg:w-1/2 relative"
                     >
                         <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-violet-500/30 dark:shadow-violet-900/30 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 transition-colors duration-300">
-                            <img
-                                src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-                                alt="Doctor using iPad"
-                                className="rounded-2xl"
-                            />
+                            <InteractiveHero />
 
-                            {/* Floating Card 1 */}
-                            <motion.div
-                                animate={{ y: [0, -10, 0] }}
-                                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                                className="absolute top-8 left-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-white/50 dark:border-slate-700 transition-colors duration-300"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="bg-emerald-100 dark:bg-emerald-900/40 p-2 rounded-lg transition-colors duration-300">
-                                        <ShieldCheck className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 font-bold transition-colors duration-300">ACCURACY</p>
-                                        <p className="text-lg font-bold text-slate-800 dark:text-white transition-colors duration-300">98.5%</p>
-                                    </div>
-                                </div>
-                            </motion.div>
-
-                            {/* Floating Card 2 */}
-                            <motion.div
-                                animate={{ y: [0, 10, 0] }}
-                                transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-                                className="absolute bottom-8 right-8 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-white/50 dark:border-slate-700 transition-colors duration-300"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="bg-amber-100 dark:bg-amber-900/40 p-2 rounded-lg transition-colors duration-300">
-                                        <Zap className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 font-bold transition-colors duration-300">SPEED</p>
-                                        <p className="text-lg font-bold text-slate-800 dark:text-white transition-colors duration-300">&lt; 2.5s</p>
-                                    </div>
-                                </div>
-                            </motion.div>
+                            {/* Hero visualizer is completely self-contained */}
                         </div>
                     </motion.div>
                 </div>
@@ -213,6 +178,137 @@ export default function Welcome() {
                     <LoginModal key="login-modal" onClose={() => setShowLoginModal(false)} />
                 )}
             </AnimatePresence>
+
+            {/* Cinematic Video Lightbox Modal */}
+            <AnimatePresence>
+                {showDemoVideo && (
+                    <motion.div
+                        key="demo-video-lightbox"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[9999] bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-10"
+                    >
+                        <div className="absolute top-6 right-6 z-50">
+                            <button 
+                                onClick={() => setShowDemoVideo(false)} 
+                                className="bg-white/10 hover:bg-rose-500 text-white rounded-full p-4 transition-all border border-white/20 shadow-2xl hover:scale-110"
+                                title="Close Demo"
+                            >
+                                <X className="h-8 w-8" />
+                            </button>
+                        </div>
+
+                        <motion.div 
+                            initial={{ scale: 0.9, y: 30 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 30 }}
+                            className="relative w-full max-w-6xl aspect-[16/9] sm:aspect-[21/9] lg:aspect-[16/9] bg-black rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-[0_0_80px_rgba(139,92,246,0.2)] ring-1 ring-white/20"
+                        >
+                            {/* Inner Video Container */}
+                            <video 
+                                src="/assets/web-gif.mov" 
+                                autoPlay 
+                                loop 
+                                muted 
+                                playsInline 
+                                className="absolute inset-0 w-full h-full object-cover scale-[1.02]" 
+                            />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
+function InteractiveHero() {
+    const [isHovered, setIsHovered] = useState(false);
+    const [currentImageIdx, setCurrentImageIdx] = useState(0);
+
+    const images = ['/assets/image1.png', '/assets/image2.png', '/assets/image3.png'];
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (!isHovered) {
+                setCurrentImageIdx(prev => (prev + 1) % images.length);
+            }
+        }, 4000);
+        return () => clearInterval(interval);
+    }, [isHovered, images.length]);
+
+    return (
+        <div 
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-crosshair bg-slate-900 group shadow-inner"
+        >
+            {/* The Cinematic Video (Always playing at the bottom) */}
+            <video 
+                src="/assets/web-gif.mov" 
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover scale-[1.05] transition-transform duration-[1.5s] ease-out group-hover:scale-100"
+            />
+
+            {/* The Image Slideshow Overlay */}
+            <motion.div
+                animate={{ opacity: isHovered ? 0 : 1 }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="absolute inset-0 w-full h-full z-10 bg-slate-900"
+            >
+                <AnimatePresence>
+                    <motion.img
+                        key={currentImageIdx}
+                        src={images[currentImageIdx]}
+                        initial={{ opacity: 0, scale: 1.05 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1.2, ease: "easeInOut" }}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        alt="Clinical AI Pipeline"
+                    />
+                </AnimatePresence>
+
+                {/* Floating Card 1 */}
+                <motion.div
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                    className="absolute top-6 left-6 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl shadow-black/40 border border-white/50 dark:border-slate-700 transition-colors duration-300"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="bg-emerald-100 dark:bg-emerald-900/40 p-2 rounded-lg transition-colors duration-300">
+                            <ShieldCheck className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+                        </div>
+                        <div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 font-bold transition-colors duration-300">ACCURACY</p>
+                            <p className="text-lg font-bold text-slate-800 dark:text-white transition-colors duration-300">98.5%</p>
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Floating Card 2 */}
+                <motion.div
+                    animate={{ y: [0, 10, 0] }}
+                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+                    className="absolute bottom-6 right-6 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl shadow-black/40 border border-white/50 dark:border-slate-700 transition-colors duration-300"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="bg-amber-100 dark:bg-amber-900/40 p-2 rounded-lg transition-colors duration-300">
+                            <Zap className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 font-bold transition-colors duration-300">SPEED</p>
+                            <p className="text-lg font-bold text-slate-800 dark:text-white transition-colors duration-300">&lt; 2.5s</p>
+                        </div>
+                    </div>
+                </motion.div>
+            </motion.div>
+
+            {/* Subtle Hover Overlay Hint */}
+            <div className={`absolute inset-0 bg-violet-600/10 z-20 pointer-events-none transition-opacity duration-700 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
         </div>
     );
 }
