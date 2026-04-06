@@ -32,6 +32,7 @@ const ProtectedRoute = ({ children }) => {
 import Welcome from './pages/Welcome';
 import Chat from './pages/Chat';
 import Profile from './pages/Profile';
+import ScanManagement from './pages/ScanManagement';
 
 function AppRoutes() {
   const { user } = useAuth();
@@ -53,6 +54,7 @@ function AppRoutes() {
         <Route path="history" element={<HistoryPage />} />
         <Route path="chat" element={<Chat />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="scan-management" element={<ScanManagement />} />
       </Route>
 
       {/* Catch-all route to redirect any unknown paths to root */}

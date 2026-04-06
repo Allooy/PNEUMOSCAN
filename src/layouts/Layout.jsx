@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { Stethoscope, LogOut, User, Activity, Moon, Sun, Settings, ChevronDown } from 'lucide-react';
+import { Stethoscope, LogOut, User, Activity, Moon, Sun, Settings, ChevronDown, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Layout() {
@@ -112,6 +112,19 @@ export default function Layout() {
                                                 </p>
                                             </div>
                                             <div className="p-2 space-y-1">
+                                                {/* Scan Management — doctors & admins only */}
+                                                {(user?.role === 'doctor' || user?.role === 'admin') && (
+                                                    <>
+                                                        <Link
+                                                            to="/scan-management"
+                                                            onClick={() => setIsDropdownOpen(false)}
+                                                            className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 rounded-xl hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                                                        >
+                                                            <ShieldAlert className="h-4 w-4" /> Scan Management
+                                                        </Link>
+                                                        <div className="h-px bg-slate-100 dark:bg-slate-700 mx-2" />
+                                                    </>
+                                                )}
                                                 <Link
                                                     to="/profile"
                                                     onClick={() => setIsDropdownOpen(false)}

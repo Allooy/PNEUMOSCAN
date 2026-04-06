@@ -262,18 +262,18 @@ export default function CaseResult() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
             {/* Header Banner */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`p-8 rounded-3xl border ${statusColors.border} ${statusColors.bg} flex flex-col md:flex-row items-start md:items-center gap-6 relative overflow-hidden`}
+                className={`p-5 sm:p-8 rounded-3xl border ${statusColors.border} ${statusColors.bg} flex flex-col md:flex-row items-start md:items-center gap-4 sm:gap-6 relative overflow-hidden`}
             >
-                <div className={`p-4 rounded-2xl ${statusColors.iconBg} shadow-sm z-10`}>
-                    <StatusIcon className={`h-10 w-10 ${statusColors.iconColor}`} />
+                <div className={`p-3 sm:p-4 rounded-2xl ${statusColors.iconBg} shadow-sm z-10 shrink-0`}>
+                    <StatusIcon className={`h-8 w-8 sm:h-10 sm:w-10 ${statusColors.iconColor}`} />
                 </div>
-                <div className="z-10 flex-1">
-                    <h1 className={`text-3xl font-bold tracking-tight ${statusColors.text}`}>{caseData.ai_result}</h1>
+                <div className="z-10 flex-1 min-w-0">
+                    <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight ${statusColors.text}`}>{caseData.ai_result}</h1>
                     <div className="flex items-center gap-3 mt-2">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide bg-white/60 dark:bg-slate-800/60 ${statusColors.text}`}>
                             Confidence Score
@@ -285,41 +285,35 @@ export default function CaseResult() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex flex-col sm:flex-row gap-3 z-10 w-full md:w-auto mt-4 md:mt-0">
+                <div className="flex flex-wrap gap-2 sm:gap-3 z-10 w-full md:w-auto">
                     <button
                         onClick={handleAskAI}
-                        className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm bg-violet-600 hover:bg-violet-700 text-white hover:shadow-md hover:-translate-y-0.5 border border-transparent"
+                        className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm bg-violet-600 hover:bg-violet-700 text-white hover:shadow-md hover:-translate-y-0.5 border border-transparent text-sm"
                     >
-                        <Bot className="h-5 w-5" />
-                        Ask AI Assistant
+                        <Bot className="h-4 w-4" />
+                        <span className="hidden xs:inline">Ask </span>AI Assistant
                     </button>
                     <button
                         onClick={handleGeneratePdf}
                         disabled={isGeneratingPdf || id === 'temporary'}
                         title={id === 'temporary' ? "Cannot export PDF for temporary scans" : "Export PDF Report"}
-                        className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm ${isGeneratingPdf || id === 'temporary'
+                        className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm text-sm ${isGeneratingPdf || id === 'temporary'
                             ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed'
                             : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:shadow-md hover:-translate-y-0.5 border border-slate-200 dark:border-slate-700'
                             }`}
                     >
                         {isGeneratingPdf ? (
-                            <>
-                                <Loader2 className="h-5 w-5 animate-spin" />
-                                Generating...
-                            </>
+                            <><Loader2 className="h-4 w-4 animate-spin" /><span className="hidden sm:inline">Generating...</span></>
                         ) : (
-                            <>
-                                <Download className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                                Export PDF Report
-                            </>
+                            <><Download className="h-4 w-4 text-violet-600 dark:text-violet-400" /><span className="hidden sm:inline">Export PDF</span><span className="sm:hidden">PDF</span></>
                         )}
                     </button>
-                    <div className="flex gap-2 justify-end">
-                        <button className="p-2.5 bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-600">
-                            <Share2 className="h-5 w-5" />
+                    <div className="flex gap-2">
+                        <button className="p-2.5 bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-600" title="Share">
+                            <Share2 className="h-4 w-4" />
                         </button>
-                        <button className="p-2.5 bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-600">
-                            <Printer className="h-5 w-5" />
+                        <button className="p-2.5 bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-600" title="Print">
+                            <Printer className="h-4 w-4" />
                         </button>
                     </div>
                 </div>
@@ -351,7 +345,7 @@ export default function CaseResult() {
                                         className="absolute inset-0 w-full h-full object-contain"
                                     />
                                 )}
-                                {showGradCam && gradCamUrl && (
+                            {showGradCam && gradCamUrl && (
                                     <motion.div
                                         key="heatmap-container"
                                         initial={{ opacity: 0 }}
@@ -367,12 +361,12 @@ export default function CaseResult() {
                                             style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
                                         />
 
-                                        {/* Scrubber Line */}
+                                        {/* Scrubber Line — visible on all screens */}
                                         <div
-                                            className="absolute top-0 bottom-0 w-1 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] pointer-events-none z-10 hidden sm:block"
-                                            style={{ left: `calc(${scrubberValue}% - 2px)` }}
+                                            className="absolute top-0 bottom-0 w-0.5 sm:w-1 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] pointer-events-none z-10"
+                                            style={{ left: `calc(${scrubberValue}% - 1px)` }}
                                         >
-                                            <div className="absolute top-1/2 left-1/2 -ml-3 -mt-3 w-6 h-6 bg-white rounded-full shadow-lg flex items-center justify-center">
+                                            <div className="absolute top-1/2 left-1/2 -ml-3 -mt-3 w-6 h-6 bg-white rounded-full shadow-lg hidden sm:flex items-center justify-center">
                                                 <div className="w-4 h-4 rounded-full border border-slate-200 flex items-center justify-center gap-[1px]">
                                                     <div className="w-[1px] h-2 bg-slate-400"></div>
                                                     <div className="w-[1px] h-2 bg-slate-400"></div>
@@ -380,14 +374,14 @@ export default function CaseResult() {
                                             </div>
                                         </div>
 
-                                        {/* Invisible Range Input Slider */}
+                                        {/* Drag scrubber — desktop (invisible overlay) */}
                                         <input
                                             type="range"
                                             min="0"
                                             max="100"
                                             value={scrubberValue}
                                             onChange={(e) => setScrubberValue(parseInt(e.target.value, 10))}
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 hidden sm:block"
                                         />
                                     </motion.div>
                                 )}
@@ -402,42 +396,62 @@ export default function CaseResult() {
                         </div>
 
                         {/* Controls */}
-                        <div className="p-4 bg-slate-900/90 backdrop-blur border-t border-slate-800 flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => setShowGradCam(!showGradCam)}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${showGradCam
-                                        ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20'
-                                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                                        }`}
-                                >
-                                    {showGradCam ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                                    {showGradCam ? 'Heatmap Active' : 'Show Heatmap'}
-                                </button>
+                        <div className="p-3 sm:p-4 bg-slate-900/90 backdrop-blur border-t border-slate-800 space-y-3">
+                            {/* Mobile GradCAM slider — always visible on small screens */}
+                            {showGradCam && gradCamUrl && (
+                                <div className="sm:hidden flex items-center gap-3 px-1">
+                                    <span className="text-xs text-slate-400 shrink-0">0%</span>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="100"
+                                        value={scrubberValue}
+                                        onChange={(e) => setScrubberValue(parseInt(e.target.value, 10))}
+                                        className="flex-1 h-1.5 rounded-full accent-violet-500 cursor-pointer"
+                                    />
+                                    <span className="text-xs text-slate-400 shrink-0">100%</span>
+                                </div>
+                            )}
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <button
+                                        onClick={() => setShowGradCam(!showGradCam)}
+                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${showGradCam
+                                            ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20'
+                                            : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                                            }`}
+                                    >
+                                        {showGradCam ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                                        {showGradCam ? 'Heatmap On' : 'Show Heatmap'}
+                                    </button>
 
+                                    <button
+                                        onClick={() => setViewMode(viewMode === 'original' ? 'cutout' : 'original')}
+                                        disabled={!cutoutUrl}
+                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${viewMode === 'cutout'
+                                            ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20'
+                                            : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    >
+                                        <Activity className="h-3.5 w-3.5" />
+                                        <span className="hidden xs:inline">{viewMode === 'cutout' ? 'Isolated View' : 'Original View'}</span>
+                                        <span className="xs:hidden">{viewMode === 'cutout' ? 'Isolated' : 'Original'}</span>
+                                    </button>
+                                </div>
                                 <button
-                                    onClick={() => setViewMode(viewMode === 'original' ? 'cutout' : 'original')}
-                                    disabled={!cutoutUrl}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${viewMode === 'cutout'
-                                        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20'
-                                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    onClick={handleDownloadDicom}
+                                    disabled={isDownloadingDicom || id === 'temporary'}
+                                    title={id === 'temporary' ? 'Not available for temporary scans' : 'Download original image file'}
+                                    className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
-                                    <Activity className="h-4 w-4" />
-                                    {viewMode === 'cutout' ? 'Surgeon View (Isolated)' : 'Original X-Ray View'}
+                                    <Download className="h-3.5 w-3.5" />
+                                    <span className="hidden sm:inline">{isDownloadingDicom ? 'Downloading...' : 'Download Image'}</span>
+                                    <span className="sm:hidden">{isDownloadingDicom ? '...' : 'Download'}</span>
                                 </button>
                             </div>
-                            <button
-                                onClick={handleDownloadDicom}
-                                disabled={isDownloadingDicom || id === 'temporary'}
-                                title={id === 'temporary' ? 'Not available for temporary scans' : 'Download original image file'}
-                                className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed"
-                            >
-                                <Download className="h-4 w-4" />
-                                {isDownloadingDicom ? 'Downloading...' : 'Download Image'}
-                            </button>
                         </div>
                     </div>
+
 
                     {/* Legend */}
                     {showGradCam && (
