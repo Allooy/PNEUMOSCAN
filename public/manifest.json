@@ -1,0 +1,22 @@
+{
+  "name": "PNEUMOSCAN",
+  "short_name": "PNEUMOSCAN",
+  "description": "AI-Powered Pneumonia Detection Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "/og-image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pneumoscan.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
