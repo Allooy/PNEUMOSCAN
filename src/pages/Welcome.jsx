@@ -351,7 +351,7 @@ function LoginView({ onClose, onSwitchRegister }) {
 
 // ─── Register View ────────────────────────────────────────────────────────────
 function RegisterView({ onClose, onSwitchLogin, onRegistered }) {
-    const [form, setForm] = useState({ full_name: '', email: '', password: '', confirm: '', role: 'staff' });
+    const [form, setForm] = useState({ full_name: '', email: '', password: '', confirm: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const { register } = useAuth();
@@ -376,7 +376,7 @@ function RegisterView({ onClose, onSwitchLogin, onRegistered }) {
         if (form.password.length < 8) { setError('Password must be at least 8 characters.'); return; }
         setLoading(true);
         try {
-            await register(form.email, form.password, form.full_name, form.role);
+            await register(form.email, form.password, form.full_name, 'staff');
             onRegistered(form.email);
         } catch (err) {
             setError(err.response?.data?.detail || 'Registration failed. Please try again.');
@@ -434,15 +434,6 @@ function RegisterView({ onClose, onSwitchLogin, onRegistered }) {
                                 className="block w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 dark:text-white transition-all outline-none text-slate-700 text-sm"
                                 placeholder="doctor@hospital.org" />
                         </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Role</label>
-                        <select value={form.role} onChange={e => setForm(p => ({ ...p, role: e.target.value }))}
-                            className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-white text-sm outline-none focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 transition-all">
-                            <option value="staff">Staff</option>
-                            <option value="doctor">Doctor</option>
-                        </select>
                     </div>
 
                     <div className="space-y-1.5">
