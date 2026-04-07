@@ -20,8 +20,11 @@ if (!fs.existsSync(src)) {
 fs.copyFileSync(src, path.join(publicDir, 'logo192.png'));
 fs.copyFileSync(src, path.join(publicDir, 'logo512.png'));
 fs.copyFileSync(src, path.join(publicDir, 'favicon.png'));
+// Overwrite the old SVG slot too — anything cached that still requests it gets the new icon
+fs.copyFileSync(src, path.join(publicDir, 'pneumoscan.png'));
 
 console.log('✅ Lung heartbeat icon placed in public/ as:');
-console.log('   - favicon.png  (browser tab icon)');
-console.log('   - logo192.png  (Apple touch icon)');
-console.log('   - logo512.png  (PWA / manifest icon)');
+console.log('   - favicon.png    (browser tab icon)');
+console.log('   - logo192.png    (Apple touch icon)');
+console.log('   - logo512.png    (PWA / manifest icon)');
+console.log('   - pneumoscan.png (legacy slot replaced)');
