@@ -215,12 +215,25 @@ function AuthModal({ onClose }) {
     // 'login' | 'register' | 'verify' | 'success'
     const [view, setView] = useState('login');
     const [registeredEmail, setRegisteredEmail] = useState('');
+    // Track where mousedown started — only close if drag began ON the backdrop
+    const mouseDownOnBackdrop = useRef(false);
+
+    const handleBackdropMouseDown = (e) => {
+        mouseDownOnBackdrop.current = e.target === e.currentTarget;
+    };
+    const handleBackdropMouseUp = (e) => {
+        if (mouseDownOnBackdrop.current && e.target === e.currentTarget) {
+            onClose();
+        }
+        mouseDownOnBackdrop.current = false;
+    };
 
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm"
-            onClick={onClose}>
-            <div onClick={e => e.stopPropagation()} className="w-full max-w-md">
+            onMouseDown={handleBackdropMouseDown}
+            onMouseUp={handleBackdropMouseUp}>
+            <div onMouseDown={e => e.stopPropagation()} onMouseUp={e => e.stopPropagation()} className="w-full max-w-md">
                 <AnimatePresence mode="wait">
                     {view === 'login' && (
                         <LoginView key="login" onClose={onClose} onSwitchRegister={() => setView('register')} />
@@ -477,6 +490,8 @@ function RegisterView({ onClose, onSwitchLogin, onRegistered }) {
 
 // ─── OTP Verify View ──────────────────────────────────────────────────────────
 function VerifyView({ email, onClose, onSuccess }) {
+    const { setToken } = useAuth();
+    const navigate = useNavigate();
     const [digits, setDigits] = useState(['', '', '', '', '', '']);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -520,8 +535,15 @@ function VerifyView({ email, onClose, onSuccess }) {
         if (code.length < 6) { setError('Please enter all 6 digits.'); return; }
         setError(''); setLoading(true);
         try {
-            await api.post('/auth/verify-email', { email, code });
-            onSuccess();
+            const res = await api.post('/auth/verify-email', { email, code });
+            // If backend returns a token, auto-login and go straight to dashboard
+            if (res.data?.access_token) {
+                setToken(res.data.access_token);
+                navigate('/dashboard');
+            } else {
+                // Fallback: show success screen (user will need to sign in manually)
+                onSuccess();
+            }
         } catch (err) {
             setError(err.response?.data?.detail || 'Invalid or expired code. Please try again.');
         } finally { setLoading(false); }
@@ -610,10 +632,16 @@ function VerifyView({ email, onClose, onSuccess }) {
 
 // ─── Success View ─────────────────────────────────────────────────────────────
 function SuccessView({ onClose }) {
+    const navigate = useNavigate();
+
     useEffect(() => {
-        const t = setTimeout(onClose, 3000);
+        // After 2.5s, close the modal and send user to sign in
+        const t = setTimeout(() => {
+            onClose();
+            navigate('/?verified=true');
+        }, 2500);
         return () => clearTimeout(t);
-    }, [onClose]);
+    }, [onClose, navigate]);
 
     return (
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
@@ -626,10 +654,10 @@ function SuccessView({ onClose }) {
                 <CheckCircle className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
             </motion.div>
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Account Verified!</h2>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">Welcome to PNEUMOSCAN. A welcome email has been sent to your inbox.</p>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-3">Closing automatically…</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">Welcome to PNEUMOSCAN. Please sign in to continue.</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-3">Redirecting you back…</p>
             <motion.div className="mt-4 h-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full overflow-hidden">
-                <motion.div initial={{ width: '100%' }} animate={{ width: 0 }} transition={{ duration: 3, ease: 'linear' }} className="h-full bg-emerald-500 rounded-full" />
+                <motion.div initial={{ width: '100%' }} animate={{ width: 0 }} transition={{ duration: 2.5, ease: 'linear' }} className="h-full bg-emerald-500 rounded-full" />
             </motion.div>
         </motion.div>
     );
