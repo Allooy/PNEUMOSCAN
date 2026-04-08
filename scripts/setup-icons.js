@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const src = path.join(
   os.homedir(),
-  '.gemini/antigravity/brain/6b0154a2-5437-4f3e-9b86-26665c48a6f4/pneumoscan_icon_1775523761797.png'
+  '.gemini/antigravity/brain/6b0154a2-5437-4f3e-9b86-26665c48a6f4/media__1775602395861.png'
 );
 
 const publicDir = path.join(__dirname, '..', 'public');

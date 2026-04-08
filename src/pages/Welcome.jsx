@@ -29,8 +29,8 @@ export default function Welcome() {
             {/* Navigation */}
             <nav aria-label="Main navigation" className="relative z-10 px-4 sm:px-6 py-5 md:px-12 flex items-center justify-between max-w-7xl mx-auto">
                 <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-2">
-                    <div className="bg-gradient-to-br from-violet-600 to-indigo-600 p-2 rounded-xl shadow-lg shadow-violet-500/30">
-                        <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    <div className="bg-gradient-to-br from-violet-600 to-indigo-600 p-1.5 rounded-xl shadow-lg shadow-violet-500/30 overflow-hidden">
+                        <img src="/favicon.png" alt="PNEUMOSCAN" className="h-5 w-5 sm:h-6 sm:w-6 object-cover" />
                     </div>
                     <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-300">
                         PNEUMO<span className="text-violet-600 dark:text-violet-400">SCAN</span>
