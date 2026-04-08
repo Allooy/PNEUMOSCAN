@@ -46,8 +46,8 @@ export default function Layout() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <Link to="/dashboard" className="flex items-center gap-2 group">
-                            <div className="bg-gradient-to-br from-violet-600 to-indigo-600 p-1.5 rounded-xl shadow-md group-hover:shadow-lg transition-all overflow-hidden">
-                                <img src="/favicon.png" alt="PNEUMOSCAN" className="h-6 w-6 object-cover" />
+                            <div className="bg-gradient-to-br from-violet-600 to-indigo-600 p-2 rounded-xl shadow-md group-hover:shadow-lg transition-all">
+                                <Activity className="h-5 w-5 text-white" />
                             </div>
                             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 tracking-tight">
                                 PNEUMO<span className="text-violet-600 dark:text-violet-400">SCAN</span>
