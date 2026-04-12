@@ -129,40 +129,38 @@ export default function UploadPage() {
                 formData.append('patient_id', isTemporary ? 'TEMP_SCAN' : patientId);
                 formData.append('is_temporary', isTemporary);
 
-                const apiPromise = api.post('/cases/analyze', formData, {
+                // Start simulation up to validation phase
+                await updateTask("Gatekeeper Validation in progress...", 1500, 40);
+
+                // Run API and wait for real validation
+                const response = await api.post('/cases/analyze', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
 
-                const visualPromise = (async () => {
-                    if (localRejected) return;
-                    await updateTask("Gatekeeper Validation in progress...", 2000, 40);
-                    if (localRejected) return;
-                    await updateTask("Verified: Image is a valid X-Ray [PASS]", 1800, 50);
-                    if (localRejected) return;
-                    await updateTask("Isolating Lung Fields...", 2200, 70);
-                    if (localRejected) return;
-                    await updateTask("Extracting Radiomic Features...", 2500, 85);
-                    if (localRejected) return;
-                    await updateTask("Estimating Pneumonia Probability...", 2000, 95);
-                })();
-
-                const [response] = await Promise.all([apiPromise, visualPromise]);
+                // Only if API succeeds do we show the "Verified" and subsequent steps
+                await updateTask("Verified: Image is a valid X-Ray [PASS]", 1200, 50);
+                await updateTask("Isolating Lung Fields...", 1500, 70);
+                await updateTask("Extracting Radiomic Features...", 1800, 85);
+                await updateTask("Estimating Pneumonia Probability...", 1500, 95);
 
                 results.push(response.data);
 
             } catch (err) {
                 localRejected = true;
                 console.error("Analysis Failed:", err);
-                if (err.response?.data?.detail === "NOT_AN_XRAY") {
+                const errorDetail = err.response?.data?.detail;
+                
+                if (errorDetail) {
                     setIsRejected(true);
                     setProgressPercent(100);
-                    setLoadingTask("Gatekeeper Error: Non-X-Ray Image Detected");
-                    return; // Stop processing entirely
+                    // Use the specific error message from backend or a fallback
+                    setLoadingTask(`Gatekeeper Error: ${errorDetail === "NOT_AN_XRAY" ? "Non-X-Ray Image Detected" : errorDetail}`);
+                    return; // Stop processing entirely and show red screen
                 }
             }
         }
 
-        if (isRejected) return; // Halt overall function if rejected
+        if (isRejected) return; // Halt overall function if rejected (safety)
 
         if (results.length > 0) {
             await updateTask("Compiling Final Report...", 1000, 100);
@@ -178,7 +176,7 @@ export default function UploadPage() {
             } else if (results.length > 1) {
                 navigate('/dashboard');
             }
-        } else {
+        } else if (!isRejected) {
             // In case of complete failure (like a connection error)
             alert("Analysis failed. Could not connect to the server or database error.");
             setIsAnalyzing(false);
