@@ -2,10 +2,11 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useMutation } from '@tanstack/react-query';
 import api from '../api';
-import { UploadCloud, FileImage, Sparkles, CheckCircle, FileText, X, Activity, Info, FileWarning, ClipboardList } from 'lucide-react';
+import { UploadCloud, FileImage, Sparkles, CheckCircle, FileText, X, Activity, Info, FileWarning, ClipboardList, Loader2, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePageTitle } from '../hooks/usePageTitle';
+import Toast from '../components/Toast';
 
 export default function UploadPage() {
     usePageTitle('Upload X-Ray');
@@ -19,6 +20,8 @@ export default function UploadPage() {
     const [isRejected, setIsRejected] = useState(false);
     const [progressPercent, setProgressPercent] = useState(0);
     const [loadingTask, setLoadingTask] = useState('');
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [toast, setToast] = useState({ show: false, message: '', type: 'error' });
     const navigate = useNavigate();
 
     // Lock body scroll when analyzing
@@ -35,16 +38,36 @@ export default function UploadPage() {
         };
     }, [isAnalyzing]);
 
-    const handleFiles = (fileList) => {
+    const handleFiles = async (fileList) => {
         if (!fileList || fileList.length === 0) return;
         const file = fileList[0];
-        const newFile = {
-            file,
-            id: Math.random().toString(36).substring(7),
-            preview: URL.createObjectURL(file),
-            status: 'pending' // pending, processing, complete, error
-        };
-        setFiles([newFile]);
+
+        setIsVerifying(true);
+        try {
+            // 1. CALL THE PRE-CHECK FIRST (Metadata only)
+            await api.get(`/cases/verify-file`, {
+                params: { 
+                    filename: file.name, 
+                    content_type: file.type 
+                }
+            });
+
+            // 2. IF IT SUCCEEDS, ALLOW FILE ADDITION
+            const newFile = {
+                file,
+                id: Math.random().toString(36).substring(7),
+                preview: URL.createObjectURL(file),
+                status: 'pending' // pending, processing, complete, error
+            };
+            setFiles([newFile]);
+        } catch (error) {
+            // 3. IF IT FAILS, SHOW WARNING & STOP
+            const message = error.response?.data?.detail || "Unsupported file or metadata mismatch. Please upload a valid Chest X-Ray image.";
+            setToast({ show: true, message, type: 'error' });
+            // Scan animation never starts because handleSubmit is never reached for this file
+        } finally {
+            setIsVerifying(false);
+        }
     };
 
     const handleFileChange = (e) => {
@@ -231,13 +254,17 @@ export default function UploadPage() {
 
                                                     <div className="py-6 flex flex-col items-center">
                                                         <div className="mx-auto w-20 h-20 bg-violet-100 dark:bg-violet-900/50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-violet-200 dark:group-hover:bg-violet-800/50 transition-all duration-300 shadow-inner">
-                                                            <UploadCloud className="h-10 w-10 text-violet-600 dark:text-violet-400" />
+                                                            {isVerifying ? (
+                                                                <Loader2 className="h-10 w-10 text-violet-600 dark:text-violet-400 animate-spin" />
+                                                            ) : (
+                                                                <UploadCloud className="h-10 w-10 text-violet-600 dark:text-violet-400" />
+                                                            )}
                                                         </div>
                                                         <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">
-                                                            {dragActive ? "Drop image here" : "Click or drag to upload"}
+                                                            {isVerifying ? "Verifying metadata..." : dragActive ? "Drop image here" : "Click or drag to upload"}
                                                         </h3>
                                                         <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto">
-                                                            Supports standard PNG, JPG, or DICOM.
+                                                            {isVerifying ? "Communicating with clinical gateway..." : "Supports standard PNG, JPG, or DICOM."}
                                                         </p>
                                                     </div>
                                                 </>
@@ -455,6 +482,13 @@ export default function UploadPage() {
                 </AnimatePresence>,
                 document.body
             )}
+            {/* TOAST SYSTEM */}
+            <Toast 
+                isVisible={toast.show}
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast(t => ({ ...t, show: false }))}
+            />
         </React.Fragment>
     );
 }
