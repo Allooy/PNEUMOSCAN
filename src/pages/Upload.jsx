@@ -38,6 +38,19 @@ export default function UploadPage() {
         };
     }, [isAnalyzing]);
 
+    // Prevent accidental tab close/refresh during analysis
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (isAnalyzing && !isRejected) {
+                e.preventDefault();
+                e.returnValue = ''; // Required for most browsers
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isAnalyzing, isRejected]);
+
     const handleFiles = async (fileList) => {
         if (!fileList || fileList.length === 0) return;
         const file = fileList[0];
