@@ -30,18 +30,28 @@ const ProtectedRoute = ({ children }) => {
 };
 
 import Welcome from './pages/Welcome';
+import DemoPage from './pages/Demo';
+import About from './pages/About';
+import Contact from './pages/Contact';
 import Chat from './pages/Chat';
 import Profile from './pages/Profile';
 import ScanManagement from './pages/ScanManagement';
+import PublicLayout from './layouts/PublicLayout';
 
 function AppRoutes() {
   const { user } = useAuth();
 
   return (
     <Routes>
-      <Route path="/" element={
-        user ? <Navigate to="/dashboard" replace /> : <Welcome />
-      } />
+      {/* Public Pages Wrapper */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={
+          user ? <Navigate to="/dashboard" replace /> : <Welcome />
+        } />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/demo" element={<DemoPage />} />
+      </Route>
 
       <Route path="/" element={
         <ProtectedRoute>

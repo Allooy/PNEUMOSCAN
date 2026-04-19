@@ -54,6 +54,9 @@ export default function CaseResult() {
 
         const fetchSecureImage = async (path) => {
             if (!path) return null;
+            if (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:')) {
+                return path;
+            }
             try {
                 const response = await api.get(`/cases/image/${path}`, { responseType: 'blob' });
                 return URL.createObjectURL(response.data);
