@@ -7,7 +7,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function CaseResult() {
-    const { id } = useParams();
+    const params = useParams();
+    const id = params.id || 'temporary';
     const navigate = useNavigate();
     const location = useLocation();
     const temporaryData = location.state?.caseData;

@@ -54,6 +54,11 @@ function AppRoutes() {
         <Route path="/demo" element={<DemoPage />} />
       </Route>
 
+      {/* Public Sandbox Layout (Allows guests to see the dashboard UI) */}
+      <Route element={<Layout />}>
+        <Route path="/demo/result" element={<CaseResult />} />
+      </Route>
+
       <Route path="/" element={
         <ProtectedRoute>
           <Layout />

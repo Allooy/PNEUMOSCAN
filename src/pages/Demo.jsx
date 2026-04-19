@@ -87,7 +87,7 @@ export default function DemoPage() {
             cutout_path: ""
         };
 
-        navigate(`/cases/temporary`, { state: { caseData: demoCaseData } });
+        navigate(`/demo/result`, { state: { caseData: demoCaseData } });
     };
 
     return (
