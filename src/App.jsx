@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import UploadPage from './pages/Upload';
 import CaseResult from './pages/CaseResult';
 import HistoryPage from './pages/History';
+import ScrollToTop from './components/ScrollToTop';
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <Router>
+          <ScrollToTop />
           <AuthProvider>
             <ChatProvider>
               <AppRoutes />

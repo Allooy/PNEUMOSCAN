@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePageTitle } from '../hooks/usePageTitle';
 
-// We use a high quality public domain chest x-ray for the demo
-const DEMO_IMAGE_URL = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Chest_Xray_PA_3-8-2010.png/800px-Chest_Xray_PA_3-8-2010.png';
+// We use the uploaded demo image
+const DEMO_IMAGE_URL = '/demo.png';
 
 export default function DemoPage() {
     usePageTitle(null, 'Interactive Demo | PNEUMOSCAN AI');
@@ -55,20 +55,23 @@ export default function DemoPage() {
             if (duration) await new Promise(r => setTimeout(r, duration));
         };
 
-        // Ultra-fast simulated workflow (total ~2.5s)
-        await updateTask("Initializing Demo Sandbox...", 300, 10);
-        await updateTask("Bypassing Network Protocols...", 300, 30);
-        await updateTask(`Scanning DEMO-PT-001...`, 400, 50);
-        await updateTask("Simulating Gatekeeper Validation...", 400, 70);
-        await updateTask("Loading Pre-computed Radiomics...", 400, 85);
-        await updateTask("Generating Heatmap...", 400, 95);
-        await updateTask("Compiling Final Report...", 300, 100);
+        // Match the real analysis workflow speed
+        await updateTask("Scanning Image Attributes...", 1800, 10);
+        await updateTask("Verifying if image is a Chest X-Ray...", 2000, 20);
+        await updateTask(`Scanning DEMO-PT-001...`, 1500, 30);
+        await updateTask("Gatekeeper Validation in progress...", 1500, 40);
+        await updateTask("Verified: Image is a valid X-Ray [PASS]", 1200, 50);
+        await updateTask("Isolating Lung Fields...", 1500, 70);
+        await updateTask("Extracting Radiomic Features...", 1800, 85);
+        await updateTask("Estimating Pneumonia Probability...", 1500, 95);
+        await updateTask("Compiling Final Report...", 1000, 100);
         
         setIsAnalyzing(false);
 
         // Fabricated case data
         const demoCaseData = {
             id: 9999,
+            is_demo: true,
             ai_result: "PNEUMONIA DETECTED",
             confidence_score: 0.88,
             lung_area_percentage: 42.1,

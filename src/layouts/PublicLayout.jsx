@@ -13,7 +13,7 @@ export default function PublicLayout() {
     const location = useLocation();
 
     return (
-        <div className="bg-slate-50 dark:bg-slate-950 min-h-screen relative overflow-x-hidden transition-colors duration-300 flex flex-col">
+        <div className="bg-slate-50 dark:bg-slate-950 min-h-[100dvh] relative transition-colors duration-300 flex flex-col">
             {/* Animated Background Blobs */}
             <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-fuchsia-400 dark:bg-fuchsia-900/40 rounded-full blur-3xl opacity-20 animate-blob transition-colors duration-300 z-0 pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-violet-500 dark:bg-violet-900/40 rounded-full blur-3xl opacity-20 animate-blob animation-delay-2000 transition-colors duration-300 z-0 pointer-events-none"></div>

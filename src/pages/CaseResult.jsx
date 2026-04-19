@@ -289,13 +289,26 @@ export default function CaseResult() {
 
                 {/* Actions */}
                 <div className="flex flex-wrap gap-2 sm:gap-3 z-10 w-full md:w-auto">
-                    <button
-                        onClick={handleAskAI}
-                        className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm bg-violet-600 hover:bg-violet-700 text-white hover:shadow-md hover:-translate-y-0.5 border border-transparent text-sm"
-                    >
-                        <Bot className="h-4 w-4" />
-                        <span className="hidden xs:inline">Ask </span>AI Assistant
-                    </button>
+                    <div className="relative group">
+                        <button
+                            onClick={caseData.is_demo ? undefined : handleAskAI}
+                            disabled={caseData.is_demo}
+                            className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm text-sm ${
+                                caseData.is_demo 
+                                ? 'bg-violet-600/50 text-white/70 cursor-not-allowed border border-transparent' 
+                                : 'bg-violet-600 hover:bg-violet-700 text-white hover:shadow-md hover:-translate-y-0.5 border border-transparent'
+                            }`}
+                        >
+                            <Bot className="h-4 w-4" />
+                            <span className="hidden xs:inline">Ask </span>AI Assistant
+                        </button>
+                        {caseData.is_demo && (
+                            <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-max px-3 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none flex flex-col items-center">
+                                Register to unlock AI
+                                <div className="absolute -bottom-1 w-2 h-2 bg-slate-800 rotate-45"></div>
+                            </div>
+                        )}
+                    </div>
                     <button
                         onClick={handleGeneratePdf}
                         disabled={isGeneratingPdf || id === 'temporary'}
@@ -360,7 +373,7 @@ export default function CaseResult() {
                                         <img
                                             src={gradCamUrl}
                                             alt="Grad-CAM Overlay"
-                                            className="absolute inset-0 w-full h-full object-contain mix-blend-screen opacity-70 pointer-events-none"
+                                            className={`absolute inset-0 w-full h-full object-contain pointer-events-none ${caseData.is_demo ? 'opacity-80 saturate-[4] hue-rotate-[320deg] sepia-[.8] contrast-[1.5] brightness-125 mix-blend-color-burn' : 'mix-blend-screen opacity-70'}`}
                                             style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
                                         />
 
@@ -556,28 +569,38 @@ export default function CaseResult() {
                     </motion.div>
 
                     {/* Clinical Notes & Voice Dictation */}
-                    <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-card border border-slate-100 dark:border-slate-700 p-6 transition-colors duration-300">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <div className="w-1 h-6 bg-teal-500 rounded-full"></div>
-                                Clinical Notes
-                            </h3>
-                            <button
-                                onClick={toggleDictation}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${isListening
-                                    ? 'bg-rose-500 text-white animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.5)]'
-                                    : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}`}
-                            >
-                                {isListening ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
-                                {isListening ? 'Recording...' : 'Dictate'}
-                            </button>
+                    <div className="relative group">
+                        <div className={`bg-white dark:bg-slate-800 rounded-3xl shadow-card border border-slate-100 dark:border-slate-700 p-6 transition-colors duration-300 relative ${caseData.is_demo ? 'opacity-60 saturate-50' : ''}`}>
+                            {caseData.is_demo && <div className="absolute inset-0 z-10 cursor-not-allowed bg-transparent"></div>}
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <div className="w-1 h-6 bg-teal-500 rounded-full"></div>
+                                    Clinical Notes
+                                </h3>
+                                <button
+                                    onClick={toggleDictation}
+                                    disabled={caseData.is_demo}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${isListening
+                                        ? 'bg-rose-500 text-white animate-pulse shadow-[0_0_15px_rgba(244,63,94,0.5)]'
+                                        : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'} ${!caseData.is_demo && !isListening ? 'hover:bg-slate-200 dark:hover:bg-slate-600' : ''}`}
+                                >
+                                    {isListening ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
+                                    {isListening ? 'Recording...' : 'Dictate'}
+                                </button>
+                            </div>
+                            <textarea
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                                disabled={caseData.is_demo}
+                                placeholder="Type or dictate clinical observations here... (These notes will be embedded into the final PDF report)"
+                                className="w-full h-32 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:bg-white dark:focus:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none transition-all resize-none shadow-inner"
+                            ></textarea>
                         </div>
-                        <textarea
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            placeholder="Type or dictate clinical observations here... (These notes will be embedded into the final PDF report)"
-                            className="w-full h-32 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:bg-white dark:focus:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none transition-all resize-none shadow-inner"
-                        ></textarea>
+                        {caseData.is_demo && (
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-max px-4 py-2 bg-slate-800 text-white text-sm font-bold rounded shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                Sign in to save records
+                            </div>
+                        )}
                     </div>
 
                     {/* Disclaimer */}
