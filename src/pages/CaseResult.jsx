@@ -55,7 +55,7 @@ export default function CaseResult() {
 
         const fetchSecureImage = async (path) => {
             if (!path) return null;
-            if (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:')) {
+            if (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:') || path.startsWith('/')) {
                 return path;
             }
             try {
