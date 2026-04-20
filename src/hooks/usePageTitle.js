@@ -17,6 +17,15 @@ export function usePageTitle(title, fullTitle) {
             document.title = title ? `${title} | PNEUMOSCAN` : 'PNEUMOSCAN | AI-Powered Pneumonia Detection Platform';
         }
 
+        // Dynamically insert/update Canonical Link
+        let canonicalLink = document.querySelector("link[rel='canonical']");
+        if (!canonicalLink) {
+            canonicalLink = document.createElement("link");
+            canonicalLink.setAttribute("rel", "canonical");
+            document.head.appendChild(canonicalLink);
+        }
+        canonicalLink.setAttribute("href", `https://pneumoscan.com${window.location.pathname}`);
+
         // Restore on unmount (good practice for modals or nested routes)
         return () => {
             document.title = previousTitle;
