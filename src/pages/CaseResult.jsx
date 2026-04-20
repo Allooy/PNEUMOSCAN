@@ -374,7 +374,7 @@ export default function CaseResult() {
                                         <img
                                             src={gradCamUrl}
                                             alt="Grad-CAM Overlay"
-                                            className={`absolute inset-0 w-full h-full object-contain pointer-events-none ${caseData.is_demo ? 'opacity-80 saturate-[4] hue-rotate-[320deg] sepia-[.8] contrast-[1.5] brightness-125 mix-blend-color-burn' : 'mix-blend-screen opacity-70'}`}
+                                            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen opacity-70"
                                             style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
                                         />
 

@@ -83,7 +83,7 @@ export default function DemoPage() {
             model_version: "v1.4.2-demo",
             report: "DEMO: Bilateral opacities identified. This is a pre-calculated demo result.",
             image_path: DEMO_IMAGE_URL,
-            gradcam_path: DEMO_IMAGE_URL, // In demo, we just reuse the image or you can use a real heatmap URL if you have one
+            gradcam_path: '/demo_heatmap.png',
             cutout_path: ""
         };
 

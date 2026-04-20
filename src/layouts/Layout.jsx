@@ -57,18 +57,31 @@ export default function Layout() {
 
                     <div className="flex items-center gap-6">
                         <nav className="hidden md:flex gap-1 bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-xl border border-white/50 dark:border-slate-700 backdrop-blur-sm">
-                            {navItems.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    to={item.path}
-                                    className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${location.pathname === item.path
-                                        ? 'bg-white dark:bg-slate-700 text-violet-600 dark:text-violet-400 shadow-sm'
-                                        : 'text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-300 hover:bg-white/50 dark:hover:bg-slate-800/50'
-                                        }`}
-                                >
-                                    {item.name}
-                                </Link>
-                            ))}
+                            {navItems.map((item) => {
+                                const isActive = location.pathname === item.path;
+                                return !user ? (
+                                    <div key={item.name} className="relative group flex items-center justify-center">
+                                        <div className="px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 dark:text-slate-500 opacity-70 cursor-not-allowed">
+                                            {item.name}
+                                        </div>
+                                        <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-max px-3 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 flex flex-col items-center">
+                                            <div className="absolute -top-1 w-2 h-2 bg-slate-800 rotate-45"></div>
+                                            Register to unlock
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <Link
+                                        key={item.name}
+                                        to={item.path}
+                                        className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${isActive
+                                            ? 'bg-white dark:bg-slate-700 text-violet-600 dark:text-violet-400 shadow-sm'
+                                            : 'text-slate-600 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-300 hover:bg-white/50 dark:hover:bg-slate-800/50'
+                                            }`}
+                                    >
+                                        {item.name}
+                                    </Link>
+                                );
+                            })}
                         </nav>
 
                         <div className="flex items-center gap-4 pl-6 border-l border-slate-200 dark:border-slate-700">
@@ -83,17 +96,24 @@ export default function Layout() {
 
                             <div className="relative" ref={dropdownRef}>
                                 <button
-                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                    className="flex items-center gap-3 bg-white/50 dark:bg-slate-800/50 p-1.5 pr-3 rounded-full border border-white/50 dark:border-slate-700 backdrop-blur-sm shadow-sm transition-all hover:shadow-md hover:border-violet-200 dark:hover:border-violet-800"
+                                    onClick={() => user ? setIsDropdownOpen(!isDropdownOpen) : location.href = '/'}
+                                    className="relative group flex items-center gap-3 bg-white/50 dark:bg-slate-800/50 p-1.5 pr-3 rounded-full border border-white/50 dark:border-slate-700 backdrop-blur-sm shadow-sm transition-all hover:shadow-md hover:border-violet-200 dark:hover:border-violet-800"
                                 >
-                                    <div className="bg-gradient-to-br from-fuchsia-500 to-violet-500 p-1.5 rounded-full shadow-sm">
+                                    <div className={`p-1.5 rounded-full shadow-sm ${!user ? 'bg-slate-400' : 'bg-gradient-to-br from-fuchsia-500 to-violet-500'}`}>
                                         <User className="h-4 w-4 text-white" />
                                     </div>
                                     <div className="hidden sm:block text-left">
-                                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-none">{user?.full_name || user?.email?.split('@')[0] || 'Clinician'}</p>
-                                        <p className="text-[10px] text-violet-600 dark:text-violet-400 font-semibold mt-0.5 uppercase tracking-wider">{user?.role || 'Staff'}</p>
+                                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-none">{user?.full_name || user?.email?.split('@')[0] || 'Demo Guest'}</p>
+                                        <p className="text-[10px] text-violet-600 dark:text-violet-400 font-semibold mt-0.5 uppercase tracking-wider">{user?.role || 'Guest Mode'}</p>
                                     </div>
-                                    <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                                    {user && <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />}
+                                    
+                                    {!user && (
+                                        <div className="absolute top-full mt-4 right-0 w-max px-3 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 flex flex-col items-center">
+                                            <div className="absolute -top-1 right-8 w-2 h-2 bg-slate-800 rotate-45"></div>
+                                            Click to login
+                                        </div>
+                                    )}
                                 </button>
 
                                 <AnimatePresence>
@@ -193,6 +213,21 @@ export default function Layout() {
                             default: Icon = Activity;
                         }
                         const isActive = location.pathname === item.path;
+
+                        if (!user) {
+                            return (
+                                <div key={item.name} className="relative group flex flex-col items-center justify-center w-full h-full space-y-1">
+                                    <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 opacity-60 cursor-not-allowed pointer-events-auto">
+                                        <Icon className="h-5 w-5" />
+                                        <span className="text-[10px] font-medium">{item.name}</span>
+                                    </div>
+                                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max px-3 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded shadow-lg opacity-0 active:opacity-100 group-hover:opacity-100 transition-opacity pointer-events-none z-50 flex flex-col items-center">
+                                        Register to unlock
+                                        <div className="absolute -bottom-1 w-2 h-2 bg-slate-800 rotate-45"></div>
+                                    </div>
+                                </div>
+                            );
+                        }
 
                         return (
                             <Link
