@@ -79,19 +79,22 @@ export default function Welcome() {
                 </div>
             </section>
 
-            {/* Demo Video */}
+            {/* Demo Video — only mounted in DOM when user clicks "View Demo" (true lazy load) */}
             <AnimatePresence>
                 {showDemoVideo && (
                     <motion.div key="demo-video-lightbox" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[9999] bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-10">
+                        className="fixed inset-0 z-[9999] bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-10"
+                        onClick={() => setShowDemoVideo(false)}>
                         <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
-                            <button onClick={() => setShowDemoVideo(false)} className="bg-white/10 hover:bg-rose-500 text-white rounded-full p-3 sm:p-4 transition-all border border-white/20 shadow-2xl hover:scale-110" title="Close Demo">
+                            <button onClick={(e) => { e.stopPropagation(); setShowDemoVideo(false); }} className="bg-white/10 hover:bg-rose-500 text-white rounded-full p-3 sm:p-4 transition-all border border-white/20 shadow-2xl hover:scale-110" title="Close Demo">
                                 <X className="h-6 w-6 sm:h-8 sm:w-8" />
                             </button>
                         </div>
                         <motion.div initial={{ scale: 0.9, y: 30 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 30 }}
-                            className="relative w-full max-w-6xl aspect-video bg-black rounded-2xl sm:rounded-[3rem] overflow-hidden shadow-[0_0_80px_rgba(139,92,246,0.2)] ring-1 ring-white/20">
-                            <video src="/assets/web-gif.mov" autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover scale-[1.02]" />
+                            className="relative w-full max-w-6xl aspect-video bg-black rounded-2xl sm:rounded-[3rem] overflow-hidden shadow-[0_0_80px_rgba(139,92,246,0.2)] ring-1 ring-white/20"
+                            onClick={(e) => e.stopPropagation()}>
+                            {/* Video only loaded here — not before — saving 3.5MB on initial page load */}
+                            <video src="/assets/web-gif.mov" autoPlay loop muted playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover scale-[1.02]" />
                         </motion.div>
                     </motion.div>
                 )}
@@ -101,48 +104,62 @@ export default function Welcome() {
 }
 
 // ─── Interactive Hero ─────────────────────────────────────────────────────────
+// NOTE: No video is loaded here. Images are WebP for fast LCP.
 function InteractiveHero() {
-    const [isHovered, setIsHovered] = useState(false);
     const [currentImageIdx, setCurrentImageIdx] = useState(0);
-    const images = ['/assets/image1.png', '/assets/image2.png', '/assets/image3.png'];
+    // WebP versions — ~25KB each vs ~2MB PNG originals
+    const images = [
+        { src: '/assets/image1.webp', fallback: '/assets/image1.png' },
+        { src: '/assets/image2.webp', fallback: '/assets/image2.png' },
+        { src: '/assets/image3.webp', fallback: '/assets/image3.png' },
+    ];
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (!isHovered) setCurrentImageIdx(prev => (prev + 1) % images.length);
+            setCurrentImageIdx(prev => (prev + 1) % images.length);
         }, 4000);
         return () => clearInterval(interval);
-    }, [isHovered, images.length]);
+    }, [images.length]);
 
     return (
-        <div onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}
-            className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden cursor-crosshair bg-slate-900 group shadow-inner">
-            <video src="/assets/web-gif.mov" autoPlay loop muted playsInline
-                className="absolute inset-0 w-full h-full object-cover scale-[1.05] transition-transform duration-[1.5s] ease-out group-hover:scale-100" />
-            <motion.div animate={{ opacity: isHovered ? 0 : 1 }} transition={{ duration: 0.6, ease: "easeInOut" }} className="absolute inset-0 w-full h-full z-10 bg-slate-900">
-                <AnimatePresence>
-                    <motion.img key={currentImageIdx} src={images[currentImageIdx]}
-                        initial={{ opacity: 0, scale: 1.05 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-                        transition={{ duration: 1.2, ease: "easeInOut" }}
-                        className="absolute inset-0 w-full h-full object-cover"
+        <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 shadow-inner">
+            <AnimatePresence mode="wait">
+                <motion.picture key={currentImageIdx}
+                    initial={{ opacity: 0, scale: 1.04 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1.0, ease: 'easeInOut' }}
+                    className="absolute inset-0 w-full h-full"
+                >
+                    <source srcSet={images[currentImageIdx].src} type="image/webp" />
+                    <img
+                        src={images[currentImageIdx].fallback}
                         alt={`PNEUMOSCAN AI clinical dashboard — chest X-ray analysis view ${currentImageIdx + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        fetchPriority={currentImageIdx === 0 ? 'high' : 'auto'}
+                        loading={currentImageIdx === 0 ? 'eager' : 'lazy'}
                     />
-                </AnimatePresence>
-                <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                    className="absolute top-4 left-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-3 rounded-2xl shadow-2xl shadow-black/40 border border-white/50 dark:border-slate-700 transition-colors duration-300">
-                    <div className="flex items-center gap-2.5">
-                        <div className="bg-emerald-100 dark:bg-emerald-900/40 p-1.5 rounded-lg"><ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div>
-                        <div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">ACCURACY</p><p className="text-base font-bold text-slate-800 dark:text-white">98.5%</p></div>
-                    </div>
-                </motion.div>
-                <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-                    className="absolute bottom-4 right-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-3 rounded-2xl shadow-2xl shadow-black/40 border border-white/50 dark:border-slate-700 transition-colors duration-300">
-                    <div className="flex items-center gap-2.5">
-                        <div className="bg-amber-100 dark:bg-amber-900/40 p-1.5 rounded-lg"><Zap className="h-5 w-5 text-amber-600 dark:text-amber-400" /></div>
-                        <div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">SPEED</p><p className="text-base font-bold text-slate-800 dark:text-white">&lt; 2.5s</p></div>
-                    </div>
-                </motion.div>
+                </motion.picture>
+            </AnimatePresence>
+
+            {/* Floating stats badges */}
+            <motion.div animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+                className="absolute top-4 left-4 z-20 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-3 rounded-2xl shadow-2xl shadow-black/40 border border-white/50 dark:border-slate-700 transition-colors duration-300">
+                <div className="flex items-center gap-2.5">
+                    <div className="bg-emerald-100 dark:bg-emerald-900/40 p-1.5 rounded-lg"><ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div>
+                    <div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">ACCURACY</p><p className="text-base font-bold text-slate-800 dark:text-white">98.5%</p></div>
+                </div>
             </motion.div>
-            <div className={`absolute inset-0 bg-violet-600/10 z-20 pointer-events-none transition-opacity duration-700 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
+            <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut', delay: 1 }}
+                className="absolute bottom-4 right-4 z-20 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-3 rounded-2xl shadow-2xl shadow-black/40 border border-white/50 dark:border-slate-700 transition-colors duration-300">
+                <div className="flex items-center gap-2.5">
+                    <div className="bg-amber-100 dark:bg-amber-900/40 p-1.5 rounded-lg"><Zap className="h-5 w-5 text-amber-600 dark:text-amber-400" /></div>
+                    <div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">SPEED</p><p className="text-base font-bold text-slate-800 dark:text-white">&lt; 2.5s</p></div>
+                </div>
+            </motion.div>
+
+            {/* Play hint overlay */}
+            <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-slate-900/30 via-transparent to-transparent" />
         </div>
     );
 }
