@@ -51,10 +51,21 @@
   <!-- Preload LCP hero image (WebP first, PNG fallback) -->
   <link rel="preload" as="image" href="/assets/image1.webp" type="image/webp" fetchpriority="high" />
 
-  <!-- Performance: Preconnect & Font Preload -->
+  <!-- Performance: Preconnect to font origins -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+
+  <!-- Preload critical Inter font weights directly — breaks the CSS→fonts chain -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa2JL7W0Q5n-wU.woff2" />
+
+  <!-- Load Google Fonts NON-BLOCKING (media=print trick, swaps to all on load) -->
+  <link rel="stylesheet" media="print" onload="this.media='all'"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
+  </noscript>
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
