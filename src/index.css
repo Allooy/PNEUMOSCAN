@@ -6,7 +6,8 @@
 
 @layer base {
   html, body {
-    @apply bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-sans antialiased overflow-x-clip;
+    @apply bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-sans antialiased;
+    overflow-x: hidden;
   }
 
   h1,

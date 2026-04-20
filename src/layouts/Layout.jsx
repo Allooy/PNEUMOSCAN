@@ -36,7 +36,7 @@ export default function Layout() {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300 flex flex-col font-sans relative overflow-hidden">
+        <div className="min-h-[100dvh] bg-slate-50 dark:bg-slate-900 transition-colors duration-300 flex flex-col font-sans relative">
             {/* Animated Background Blobs */}
             <div className="fixed top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-fuchsia-400 rounded-full blur-3xl opacity-10 animate-blob pointer-events-none"></div>
             <div className="fixed bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-violet-500 rounded-full blur-3xl opacity-10 animate-blob animation-delay-2000 pointer-events-none"></div>
