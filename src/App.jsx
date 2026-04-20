@@ -37,6 +37,7 @@ import Contact from './pages/Contact';
 import Chat from './pages/Chat';
 import Profile from './pages/Profile';
 import ScanManagement from './pages/ScanManagement';
+import VerifyPage from './pages/VerifyPage';
 import PublicLayout from './layouts/PublicLayout';
 
 function AppRoutes() {
@@ -72,6 +73,9 @@ function AppRoutes() {
         <Route path="profile" element={<Profile />} />
         <Route path="scan-management" element={<ScanManagement />} />
       </Route>
+
+      {/* Email verification error page — standalone, no auth or layout wrapper */}
+      <Route path="/verify" element={<VerifyPage />} />
 
       {/* Catch-all route to redirect any unknown paths to root */}
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Users, FileText, Activity, AlertTriangle, ArrowRight, TrendingUp, Clock } from 'lucide-react';
+import { Users, FileText, Activity, AlertTriangle, ArrowRight, TrendingUp, Clock, CheckCircle, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Dashboard() {
     usePageTitle('Dashboard');
+    const [showVerifiedBanner, setShowVerifiedBanner] = useState(false);
+
+    useEffect(() => {
+        if (sessionStorage.getItem('justVerified') === 'true') {
+            sessionStorage.removeItem('justVerified');
+            setShowVerifiedBanner(true);
+            // Auto-dismiss after 5 seconds
+            const timer = setTimeout(() => setShowVerifiedBanner(false), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, []);
     const { data: stats } = useQuery({
         queryKey: ['dashboard-stats'],
         queryFn: async () => {
@@ -36,6 +47,28 @@ export default function Dashboard() {
 
     return (
         <div className="space-y-8 relative z-10">
+            {/* ── Email Verified Success Banner ───────────────────────────── */}
+            <AnimatePresence>
+                {showVerifiedBanner && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4, ease: 'easeOut' }}
+                        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-emerald-900/90 border border-emerald-500/50 shadow-2xl shadow-emerald-900/40 backdrop-blur-md text-emerald-100 text-sm font-semibold w-max max-w-[90vw]"
+                    >
+                        <CheckCircle className="h-5 w-5 text-emerald-400 shrink-0" />
+                        <span>Email verified successfully! Welcome to PNEUMOSCAN.</span>
+                        <button
+                            onClick={() => setShowVerifiedBanner(false)}
+                            className="ml-2 p-1 rounded-full hover:bg-emerald-800/60 transition-colors"
+                            aria-label="Dismiss"
+                        >
+                            <X className="h-4 w-4 text-emerald-300" />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}

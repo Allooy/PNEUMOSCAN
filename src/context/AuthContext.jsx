@@ -9,11 +9,11 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // ── 1. Restore session from localStorage ──────────────────────────────
         const token = localStorage.getItem('token');
         if (token) {
             try {
                 const decoded = jwtDecode(token);
-                // Check if expired
                 if (decoded.exp * 1000 < Date.now()) {
                     logout();
                 } else {
@@ -23,6 +23,29 @@ export const AuthProvider = ({ children }) => {
                 logout();
             }
         }
+
+        // ── 2. Handle magic link hash fragment (#verified=true&access_token=…) ─
+        const hash = window.location.hash.substring(1);
+        if (hash) {
+            const hashParams = new URLSearchParams(hash);
+            const verified = hashParams.get('verified');
+            const accessToken = hashParams.get('access_token');
+
+            if (verified === 'true' && accessToken) {
+                localStorage.setItem('token', accessToken);
+                try {
+                    const decoded = jwtDecode(accessToken);
+                    setUser({ email: decoded.sub, role: decoded.role, full_name: decoded.full_name });
+                } catch (e) {
+                    console.error('Magic link JWT decode failed:', e);
+                }
+                // Remove token from URL so it's never bookmarked or visible in history
+                window.history.replaceState(null, '', window.location.pathname);
+                // Signal the Dashboard to show a welcome banner
+                sessionStorage.setItem('justVerified', 'true');
+            }
+        }
+
         setLoading(false);
     }, []);
 
