@@ -14,10 +14,10 @@ export default function PublicLayout() {
 
     return (
         <div className="min-h-[100dvh] bg-slate-50 dark:bg-slate-950 relative transition-colors duration-300 flex flex-col">
-            {/* Animated Background Blobs */}
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-fuchsia-400 dark:bg-fuchsia-900/40 rounded-full blur-3xl opacity-20 animate-blob transition-colors duration-300 z-0 pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-violet-500 dark:bg-violet-900/40 rounded-full blur-3xl opacity-20 animate-blob animation-delay-2000 transition-colors duration-300 z-0 pointer-events-none"></div>
-            <div className="absolute top-1/2 left-1/2 -ml-32 -mt-32 w-64 h-64 bg-cyan-400 dark:bg-cyan-900/40 rounded-full blur-3xl opacity-20 animate-blob animation-delay-4000 transition-colors duration-300 z-0 pointer-events-none"></div>
+            {/* Animated Background Blobs — fixed so they never cause layout overflow */}
+            <div className="fixed top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-fuchsia-400 dark:bg-fuchsia-900/40 rounded-full blur-3xl opacity-20 animate-blob transition-colors duration-300 z-0 pointer-events-none"></div>
+            <div className="fixed bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-violet-500 dark:bg-violet-900/40 rounded-full blur-3xl opacity-20 animate-blob animation-delay-2000 transition-colors duration-300 z-0 pointer-events-none"></div>
+            <div className="fixed top-1/2 left-1/2 -ml-32 -mt-32 w-64 h-64 bg-cyan-400 dark:bg-cyan-900/40 rounded-full blur-3xl opacity-20 animate-blob animation-delay-4000 transition-colors duration-300 z-0 pointer-events-none"></div>
 
             {/* Navigation */}
             <nav aria-label="Main navigation" className="relative z-50 px-4 sm:px-6 py-5 md:px-12 flex items-center justify-between max-w-7xl mx-auto w-full">
