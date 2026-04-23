@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useAuth } from '../context/AuthContext';
 
 export default function Dashboard() {
     usePageTitle('Dashboard');

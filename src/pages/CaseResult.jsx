@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api';
-import { Loader2, AlertTriangle, CheckCircle, HelpCircle, Eye, EyeOff, Download, Share2, Printer, Activity, Mic, MicOff, BrainCircuit, BarChart, Bot, ShieldCheck } from 'lucide-react';
+import { Loader2, AlertTriangle, CheckCircle, HelpCircle, Eye, EyeOff, Download, Share2, Printer, Activity, Mic, MicOff, BrainCircuit, BarChart, Bot, ShieldCheck, ShieldAlert, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { useAuth } from '../context/AuthContext';
@@ -25,6 +25,7 @@ export default function CaseResult() {
     const [notes, setNotes] = useState('');
     const [isListening, setIsListening] = useState(false);
     const [isSavingValidation, setIsSavingValidation] = useState(false);
+    const [showDenyConfirm, setShowDenyConfirm] = useState(false);
 
     // PDF Config Options
     const [pdfConfig, setPdfConfig] = useState({
@@ -236,15 +237,39 @@ export default function CaseResult() {
         }
     };
 
-    const handleSaveValidation = async () => {
+    const handleApproveValidation = async () => {
         if (id === 'temporary') return;
         setIsSavingValidation(true);
         try {
-            await api.put(`/cases/${id}`, { clinical_notes: notes });
-            alert("Validation notes saved successfully.");
+            await api.put(`/cases/${id}`, { 
+                clinical_notes: notes,
+                status: 'Validated'
+            });
+            alert("Case validated and approved successfully.");
+            // Refetch to update status UI
+            window.location.reload(); 
         } catch (err) {
-            console.error("Save Validation failed:", err);
-            alert("Failed to save validation notes.");
+            console.error("Approve Validation failed:", err);
+            alert("Failed to approve validation.");
+        } finally {
+            setIsSavingValidation(false);
+        }
+    };
+
+    const handleDenyValidation = async () => {
+        if (id === 'temporary') return;
+        setIsSavingValidation(true);
+        try {
+            await api.put(`/cases/${id}`, { 
+                clinical_notes: notes,
+                status: 'Denied'
+            });
+            setShowDenyConfirm(false);
+            alert("Case flagged as Incorrect (Denied).");
+            window.location.reload();
+        } catch (err) {
+            console.error("Deny Validation failed:", err);
+            alert("Failed to deny validation.");
         } finally {
             setIsSavingValidation(false);
         }
@@ -618,16 +643,39 @@ export default function CaseResult() {
                                 className="w-full h-32 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:bg-white dark:focus:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none transition-all resize-none shadow-inner"
                             ></textarea>
 
-                            {(user?.role === 'admin' || user?.role === 'doctor') && id !== 'temporary' && (
-                                <div className="mt-4">
+                            {(user?.role === 'admin' || user?.role === 'doctor') && id !== 'temporary' && caseData.status === 'Pending' && (
+                                <div className="mt-4 flex flex-col gap-3">
                                     <button
-                                        onClick={handleSaveValidation}
+                                        onClick={handleApproveValidation}
                                         disabled={isSavingValidation}
-                                        className="w-full py-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm shadow-lg shadow-teal-500/20 transition-all flex items-center justify-center gap-2"
+                                        className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
                                     >
                                         {isSavingValidation ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-                                        Save Validation
+                                        Approve AI Analysis
                                     </button>
+                                    <button
+                                        onClick={() => setShowDenyConfirm(true)}
+                                        disabled={isSavingValidation}
+                                        className="w-full py-3 rounded-xl bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 font-bold text-sm transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <ShieldAlert className="h-4 w-4" />
+                                        Deny (Model is Mistaken)
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Status indicator if already validated/denied */}
+                            {caseData.status !== 'Pending' && id !== 'temporary' && (
+                                <div className={`mt-4 p-4 rounded-xl border flex items-center gap-3 ${
+                                    caseData.status === 'Validated' 
+                                    ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400' 
+                                    : 'bg-rose-50 dark:bg-rose-900/20 border-rose-100 dark:border-rose-800 text-rose-700 dark:text-rose-400'
+                                }`}>
+                                    {caseData.status === 'Validated' ? <CheckCircle className="h-5 w-5" /> : <ShieldAlert className="h-5 w-5" />}
+                                    <div className="text-sm font-bold">
+                                        Clinical Oversight: {caseData.status === 'Validated' ? 'Approved' : 'Denied'}
+                                        <p className="text-[10px] font-medium opacity-70 mt-0.5">Decision finalized in database</p>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -637,6 +685,57 @@ export default function CaseResult() {
                             </div>
                         )}
                     </div>
+
+                    {/* Deny Confirmation Modal */}
+                    <AnimatePresence>
+                        {showDenyConfirm && (
+                            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                                <motion.div 
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    onClick={() => setShowDenyConfirm(false)}
+                                    className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
+                                />
+                                <motion.div
+                                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                                    exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                                    className="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 p-8 text-center"
+                                >
+                                    <div className="w-16 h-16 bg-rose-100 dark:bg-rose-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <ShieldAlert className="h-8 w-8 text-rose-600 dark:text-rose-400" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Deny AI Validation?</h3>
+                                    <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
+                                        Are you sure the AI model is mistaken? Flagging this case as <strong>Denied</strong> will mark the model's output as incorrect for clinical auditing.
+                                    </p>
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => setShowDenyConfirm(false)}
+                                            className="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-600 transition-all"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleDenyValidation}
+                                            disabled={isSavingValidation}
+                                            className="flex-1 py-3 rounded-xl bg-rose-600 text-white font-bold text-sm hover:bg-rose-700 shadow-lg shadow-rose-500/30 transition-all flex items-center justify-center gap-2"
+                                        >
+                                            {isSavingValidation && <Loader2 className="h-4 w-4 animate-spin" />}
+                                            Yes, Deny
+                                        </button>
+                                    </div>
+                                    <button 
+                                        onClick={() => setShowDenyConfirm(false)}
+                                        className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                                    >
+                                        <X className="h-5 w-5" />
+                                    </button>
+                                </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
 
                     {/* Disclaimer */}
                     <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-5 border border-blue-100 dark:border-blue-900/50 text-blue-800 dark:text-blue-300 text-sm transition-colors duration-300">
