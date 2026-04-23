@@ -30,7 +30,8 @@ export default function AuthModal({ onClose }) {
             <div onMouseDown={e => e.stopPropagation()} onMouseUp={e => e.stopPropagation()} className="w-full max-w-md">
                 <AnimatePresence mode="wait">
                     {view === 'login' && (
-                        <LoginView key="login" onClose={onClose} onSwitchRegister={() => setView('register')} />
+                        <LoginView key="login" onClose={onClose} onSwitchRegister={() => setView('register')}
+                            onUnverified={(email) => { setRegisteredEmail(email); setView('verify'); }} />
                     )}
                     {view === 'register' && (
                         <RegisterView key="register" onClose={onClose} onSwitchLogin={() => setView('login')}
@@ -49,7 +50,7 @@ export default function AuthModal({ onClose }) {
 }
 
 // ─── Login View ───────────────────────────────────────────────────────────────
-function LoginView({ onClose, onSwitchRegister }) {
+function LoginView({ onClose, onSwitchRegister, onUnverified }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(true);
@@ -64,8 +65,12 @@ function LoginView({ onClose, onSwitchRegister }) {
         try {
             await login(email, password);
             navigate('/dashboard');
-        } catch {
-            setError('Invalid email or password. Please try again.');
+        } catch (err) {
+            if (err.response?.status === 403 && err.response?.data?.detail === 'UNVERIFIED_USER') {
+                onUnverified(email);
+            } else {
+                setError(err.response?.data?.detail || 'Invalid email or password. Please try again.');
+            }
         } finally { setLoading(false); }
     };
 
