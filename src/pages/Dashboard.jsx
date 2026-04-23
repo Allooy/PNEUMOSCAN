@@ -8,6 +8,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Dashboard() {
     usePageTitle('Dashboard');
+    const { user } = useAuth();
     const [showVerifiedBanner, setShowVerifiedBanner] = useState(false);
 
     useEffect(() => {
@@ -110,12 +111,12 @@ export default function Dashboard() {
                     gradient="bg-gradient-to-br from-amber-400 to-orange-500"
                     trend={stats?.pendingReviewTrend}
                 />
-                <StatsCard
-                    title="Positive Rate"
-                    value={stats?.positiveRate}
-                    icon={<Activity className="h-6 w-6 text-white" />}
+                 <StatsCard
+                    title="Validation Rate"
+                    value={stats?.validationRate}
+                    icon={<CheckCircle className="h-6 w-6 text-white" />}
                     gradient="bg-gradient-to-br from-rose-500 to-pink-600"
-                    trend={stats?.positiveRateTrend}
+                    trend={stats?.validationRateTrend}
                 />
                 <StatsCard
                     title="Avg Confidence"
@@ -183,9 +184,13 @@ export default function Dashboard() {
                                             <td className="px-6 py-5 whitespace-nowrap text-sm font-bold text-slate-700 dark:text-slate-200">#{caseItem.id}</td>
                                             <td className="px-6 py-5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-medium">{new Date(caseItem.uploaded_at).toLocaleDateString()}</td>
                                             <td className="px-6 py-5 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-medium">PT-{caseItem.patient_id}</td>
-                                            <td className="px-6 py-5 whitespace-nowrap">
-                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border shadow-sm transition-colors duration-300 bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-600">
-                                                    Completed
+                                             <td className="px-6 py-5 whitespace-nowrap">
+                                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border shadow-sm transition-colors duration-300 ${
+                                                    caseItem.status === 'Pending' 
+                                                        ? 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800' 
+                                                        : 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800'
+                                                }`}>
+                                                    {caseItem.status}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-5 whitespace-nowrap">
@@ -194,9 +199,15 @@ export default function Dashboard() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
-                                                <Link to={`/cases/${caseItem.id}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-700 dark:hover:text-violet-300 transition-all opacity-100 md:opacity-0 group-hover:opacity-100 md:transform md:translate-x-2 group-hover:translate-x-0 duration-200">
-                                                    Details <ArrowRight className="w-3 h-3" />
-                                                </Link>
+                                                {(caseItem.status === 'Pending' && (user?.role === 'admin' || user?.role === 'doctor')) ? (
+                                                    <Link to={`/cases/${caseItem.id}`} className="inline-flex items-center gap-1 px-4 py-1.5 rounded-xl bg-amber-500 text-white shadow-lg shadow-amber-500/30 hover:bg-amber-600 transition-all font-bold">
+                                                        Validate <ArrowRight className="w-4 h-4 ml-1" />
+                                                    </Link>
+                                                ) : (
+                                                    <Link to={`/cases/${caseItem.id}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-700 dark:hover:text-violet-300 transition-all opacity-100 md:opacity-0 group-hover:opacity-100 md:transform md:translate-x-2 group-hover:translate-x-0 duration-200">
+                                                        Details <ArrowRight className="w-3 h-3" />
+                                                    </Link>
+                                                )}
                                             </td>
                                         </motion.tr>
                                     );

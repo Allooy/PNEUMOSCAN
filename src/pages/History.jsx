@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../api';
-import { Eye, Calendar, User, FileDigit, Plus, Search } from 'lucide-react';
+import { Eye, Calendar, User, FileDigit, Plus, Search, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useAuth } from '../context/AuthContext';
 import { PaginationBar } from './ScanManagement';
 
 const ITEMS_PER_PAGE = 10;
 
 export default function HistoryPage() {
     usePageTitle('Case History');
+    const { user } = useAuth();
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const [filter, setFilter] = useState('All');
@@ -43,6 +45,7 @@ export default function HistoryPage() {
         if (filter === 'PNEUMONIA') matchesFilter = caseItem.ai_result === "PNEUMONIA DETECTED";
         if (filter === 'NO PNEUMONIA') matchesFilter = caseItem.ai_result === "NO PNEUMONIA DETECTED";
         if (filter === 'Inconclusive') matchesFilter = caseItem.ai_result === "INCONCLUSIVE";
+        if (filter === 'Needs Review') matchesFilter = caseItem.status === "Pending";
 
         if (!matchesFilter) return false;
 
@@ -110,7 +113,7 @@ export default function HistoryPage() {
 
                 {/* Filter Pills */}
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 hide-scrollbar shrink-0">
-                    {['All', 'PNEUMONIA', 'NO PNEUMONIA', 'Inconclusive'].map(lbl => (
+                    {['All', 'PNEUMONIA', 'NO PNEUMONIA', 'Inconclusive'].concat((user?.role === 'admin' || user?.role === 'doctor') ? ['Needs Review'] : []).map(lbl => (
                         <button
                             key={lbl}
                             onClick={() => setFilter(lbl)}
@@ -206,15 +209,25 @@ export default function HistoryPage() {
                                                 </div>
                                             </div>
 
-                                            {/* Action */}
+                                             {/* Action */}
                                             <div className="flex justify-end w-full sm:w-auto">
-                                                <Link
-                                                    to={`/cases/${caseItem.id}`}
-                                                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400 transition-colors duration-300 text-xs"
-                                                >
-                                                    <Eye className="h-3.5 w-3.5" />
-                                                    View
-                                                </Link>
+                                                {(caseItem.status === 'Pending' && (user?.role === 'admin' || user?.role === 'doctor')) ? (
+                                                    <Link
+                                                        to={`/cases/${caseItem.id}`}
+                                                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500 text-white font-bold hover:bg-amber-600 transition-all shadow-md shadow-amber-500/20 text-xs"
+                                                    >
+                                                        <ShieldCheck className="h-3.5 w-3.5" />
+                                                        Validate
+                                                    </Link>
+                                                ) : (
+                                                    <Link
+                                                        to={`/cases/${caseItem.id}`}
+                                                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium hover:bg-violet-50 dark:hover:bg-violet-900/30 hover:text-violet-600 dark:hover:text-violet-400 transition-colors duration-300 text-xs"
+                                                    >
+                                                        <Eye className="h-3.5 w-3.5" />
+                                                        View
+                                                    </Link>
+                                                )}
                                             </div>
                                         </div>
                                     </motion.div>

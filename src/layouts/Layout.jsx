@@ -29,11 +29,11 @@ export default function Layout() {
     };
 
     const navItems = [
-        { name: 'Dashboard', path: '/dashboard' },
+        { name: 'Dashboard', path: '/dashboard', roles: ['admin', 'doctor'] },
         { name: 'New Analysis', path: '/upload' },
         { name: 'Patient History', path: '/history' },
         { name: 'AI Assistant', path: '/chat' },
-    ];
+    ].filter(item => !item.roles || (user && item.roles.includes(user.role)));
 
     return (
         <div className="min-h-[100dvh] bg-slate-50 dark:bg-slate-900 transition-colors duration-300 flex flex-col font-sans relative">

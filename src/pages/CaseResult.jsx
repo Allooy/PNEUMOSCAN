@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api';
-import { Loader2, AlertTriangle, CheckCircle, HelpCircle, Eye, EyeOff, Download, Share2, Printer, Activity, Mic, MicOff, BrainCircuit, BarChart, Bot } from 'lucide-react';
+import { Loader2, AlertTriangle, CheckCircle, HelpCircle, Eye, EyeOff, Download, Share2, Printer, Activity, Mic, MicOff, BrainCircuit, BarChart, Bot, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { useAuth } from '../context/AuthContext';
 
 export default function CaseResult() {
+    const { user } = useAuth();
     const params = useParams();
     const id = params.id || 'temporary';
     const navigate = useNavigate();
@@ -22,6 +24,7 @@ export default function CaseResult() {
     // Voice Dictation State
     const [notes, setNotes] = useState('');
     const [isListening, setIsListening] = useState(false);
+    const [isSavingValidation, setIsSavingValidation] = useState(false);
 
     // PDF Config Options
     const [pdfConfig, setPdfConfig] = useState({
@@ -204,15 +207,22 @@ export default function CaseResult() {
         });
     };
 
-    const handleDownloadDicom = async () => {
+    const handleDownloadImage = async () => {
         setIsDownloadingDicom(true);
         try {
-            const response = await fetch(imageUrl);
+            // Priority: Heatmapped image (Grad-CAM) if available, otherwise original base image
+            const downloadUrl = gradCamUrl || imageUrl;
+            
+            const response = await fetch(downloadUrl);
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            const filename = caseData.image_path?.split('/').pop() || `PNEUMOSCAN_${id}.png`;
+            
+            // Generate filename based on what we're downloading
+            const typeSuffix = gradCamUrl ? '_XAI' : '';
+            const filename = `PNEUMOSCAN_${id}${typeSuffix}.png`;
+            
             link.setAttribute('download', filename);
             document.body.appendChild(link);
             link.click();
@@ -223,6 +233,20 @@ export default function CaseResult() {
             alert('Failed to download image file.');
         } finally {
             setIsDownloadingDicom(false);
+        }
+    };
+
+    const handleSaveValidation = async () => {
+        if (id === 'temporary') return;
+        setIsSavingValidation(true);
+        try {
+            await api.put(`/cases/${id}`, { clinical_notes: notes });
+            alert("Validation notes saved successfully.");
+        } catch (err) {
+            console.error("Save Validation failed:", err);
+            alert("Failed to save validation notes.");
+        } finally {
+            setIsSavingValidation(false);
         }
     };
 
@@ -326,9 +350,6 @@ export default function CaseResult() {
                         )}
                     </button>
                     <div className="flex gap-2">
-                        <button className="p-2.5 bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-600" title="Share">
-                            <Share2 className="h-4 w-4" />
-                        </button>
                         <button className="p-2.5 bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-600" title="Print">
                             <Printer className="h-4 w-4" />
                         </button>
@@ -456,13 +477,13 @@ export default function CaseResult() {
                                     </button>
                                 </div>
                                 <button
-                                    onClick={handleDownloadDicom}
+                                    onClick={handleDownloadImage}
                                     disabled={isDownloadingDicom || id === 'temporary'}
-                                    title={id === 'temporary' ? 'Not available for temporary scans' : 'Download original image file'}
-                                    className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed"
+                                    title={id === 'temporary' ? 'Not available for temporary scans' : 'Download high-fidelity diagnostic image'}
+                                    className="flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 transition-colors text-xs font-bold disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     <Download className="h-3.5 w-3.5" />
-                                    <span className="hidden sm:inline">{isDownloadingDicom ? 'Downloading...' : 'Download Image'}</span>
+                                    <span className="hidden sm:inline">{isDownloadingDicom ? 'Downloading...' : (gradCamUrl ? 'Download High-Res XAI' : 'Download Original')}</span>
                                     <span className="sm:hidden">{isDownloadingDicom ? '...' : 'Download'}</span>
                                 </button>
                             </div>
@@ -596,6 +617,19 @@ export default function CaseResult() {
                                 placeholder="Type or dictate clinical observations here... (These notes will be embedded into the final PDF report)"
                                 className="w-full h-32 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:bg-white dark:focus:bg-slate-800 text-slate-800 dark:text-slate-200 text-sm focus:ring-2 focus:ring-violet-500 focus:outline-none transition-all resize-none shadow-inner"
                             ></textarea>
+
+                            {(user?.role === 'admin' || user?.role === 'doctor') && id !== 'temporary' && (
+                                <div className="mt-4">
+                                    <button
+                                        onClick={handleSaveValidation}
+                                        disabled={isSavingValidation}
+                                        className="w-full py-3 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm shadow-lg shadow-teal-500/20 transition-all flex items-center justify-center gap-2"
+                                    >
+                                        {isSavingValidation ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+                                        Save Validation
+                                    </button>
+                                </div>
+                            )}
                         </div>
                         {caseData.is_demo && (
                             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-max px-4 py-2 bg-slate-800 text-white text-sm font-bold rounded shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">

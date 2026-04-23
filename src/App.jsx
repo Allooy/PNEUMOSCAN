@@ -10,26 +10,6 @@ import UploadPage from './pages/Upload';
 import CaseResult from './pages/CaseResult';
 import HistoryPage from './pages/History';
 import ScrollToTop from './components/ScrollToTop';
-
-const queryClient = new QueryClient();
-
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="animate-pulse flex flex-col items-center">
-        <div className="h-12 w-12 bg-gray-200 rounded-full mb-4"></div>
-        <div className="h-4 w-32 bg-gray-200 rounded"></div>
-      </div>
-    </div>
-  );
-
-  if (!user) return <Navigate to="/login" replace />;
-
-  return children;
-};
-
 import Welcome from './pages/Welcome';
 import DemoPage from './pages/Demo';
 import About from './pages/About';
@@ -39,6 +19,31 @@ import Profile from './pages/Profile';
 import ScanManagement from './pages/ScanManagement';
 import VerifyPage from './pages/VerifyPage';
 import PublicLayout from './layouts/PublicLayout';
+
+const queryClient = new QueryClient();
+
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="animate-pulse flex flex-col items-center">
+        <div className="h-12 w-12 bg-gray-200 rounded-full mb-4"></div>
+        <div className="h-4 w-32 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  );
+  if (!user) return <Navigate to="/" replace />;
+  return children;
+};
+
+const AdminDoctorRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user || (user.role !== 'admin' && user.role !== 'doctor')) {
+    return <Navigate to="/history" replace />;
+  }
+  return children;
+};
 
 function AppRoutes() {
   const { user } = useAuth();
@@ -65,7 +70,11 @@ function AppRoutes() {
           <Layout />
         </ProtectedRoute>
       }>
-        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="dashboard" element={
+          <AdminDoctorRoute>
+            <Dashboard />
+          </AdminDoctorRoute>
+        } />
         <Route path="upload" element={<UploadPage />} />
         <Route path="cases/:id" element={<CaseResult />} />
         <Route path="history" element={<HistoryPage />} />
