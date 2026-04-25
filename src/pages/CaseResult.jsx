@@ -395,37 +395,36 @@ export default function CaseResult() {
                 >
                     <div className="bg-slate-900 rounded-3xl shadow-2xl overflow-hidden relative group border border-slate-800">
                         {/* Image Viewer Container */}
-                        <div className="relative aspect-[4/3] flex items-center justify-center bg-black">
+                        <div className="relative aspect-[4/3] bg-black overflow-hidden group">
                             <AnimatePresence mode="wait">
-                                <div className="relative max-h-full max-w-full w-fit h-fit mx-auto">
-                                    {currentBaseImageUrl && (
-                                        <motion.img
-                                            key={viewMode === 'cutout' ? 'cutout' : 'original'}
-                                            src={currentBaseImageUrl}
-                                            alt="CXR Base"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.4 }}
-                                            className="max-h-[70vh] sm:max-h-[80vh] md:max-h-full max-w-full w-auto h-auto block pointer-events-none"
+                                {currentBaseImageUrl && (
+                                    <motion.img
+                                        key={viewMode === 'cutout' ? 'cutout' : 'original'}
+                                        src={currentBaseImageUrl}
+                                        alt="CXR Base"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.4 }}
+                                        className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                                    />
+                                )}
+                                
+                                {showGradCam && gradCamUrl && (
+                                    <motion.div
+                                        key="heatmap-container"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.5 }}
+                                        className="absolute inset-0 w-full h-full"
+                                    >
+                                        <img
+                                            src={gradCamUrl}
+                                            alt="Grad-CAM Overlay"
+                                            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen opacity-70"
+                                            style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
                                         />
-                                    )}
-                                    
-                                    {showGradCam && gradCamUrl && (
-                                        <motion.div
-                                            key="heatmap-container"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ duration: 0.5 }}
-                                            className="absolute inset-0"
-                                        >
-                                            <img
-                                                src={gradCamUrl}
-                                                alt="Grad-CAM Overlay"
-                                                className="w-full h-full object-fill pointer-events-none mix-blend-screen opacity-70"
-                                                style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
-                                            />
 
                                             {/* Scrubber Line */}
                                             <div
@@ -451,7 +450,6 @@ export default function CaseResult() {
                                             />
                                         </motion.div>
                                     )}
-                                </div>
                             </AnimatePresence>
 
                             {/* Overlay Controls */}

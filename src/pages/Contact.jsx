@@ -5,7 +5,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Contact() {
     usePageTitle(
-        null, 
+        null,
         'Get in touch with PNEUMOSCAN for clinical support, hospital partnerships, and API integration inquiries. Our medical sales team is ready to assist you with AI diagnostic implementation.',
         'Contact Us | PNEUMOSCAN AI'
     );
@@ -43,13 +43,13 @@ export default function Contact() {
             </section>
 
             <section className="px-4 sm:px-6 md:px-12 max-w-7xl mx-auto flex flex-col lg:flex-row gap-12">
-                
+
                 {/* Contact Info Cards */}
                 <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="lg:w-1/3 flex flex-col gap-6">
                     {[
                         { icon: <Mail className="h-6 w-6 text-violet-600 dark:text-violet-400" />, title: 'Email Support', desc: 'support@pneumoscan.com', subdesc: 'Usually responds within 2 hours', bg: 'bg-violet-100 dark:bg-violet-900/30' },
                         { icon: <Phone className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />, title: 'Sales & Partnerships', desc: '+1 (800) 555-0199', subdesc: 'Mon-Fri, 9am-6pm EST', bg: 'bg-cyan-100 dark:bg-cyan-900/30' },
-                        { icon: <MapPin className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />, title: 'Headquarters', desc: '142 Innovation Way', subdesc: 'Cambridge, MA 02142', bg: 'bg-emerald-100 dark:bg-emerald-900/30' },
+                        { icon: <MapPin className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />, title: 'Headquarters', desc: '142 Innovation Way', subdesc: 'Muharraq, Kingdom of Bahrain', bg: 'bg-emerald-100 dark:bg-emerald-900/30' },
                     ].map((card, i) => (
                         <div key={i} className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none flex items-start gap-4 hover:-translate-y-1 transition-transform duration-300">
                             <div className={`${card.bg} p-3 rounded-2xl shrink-0`}>
@@ -83,13 +83,13 @@ export default function Contact() {
                         <div className="grid md:grid-cols-2 gap-6">
                             <div className="space-y-1.5">
                                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Full Name</label>
-                                <input type="text" required value={form.name} onChange={e => setForm({...form, name: e.target.value})}
+                                <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
                                     className="block w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 dark:text-white transition-all outline-none text-slate-700 text-sm"
                                     placeholder="Dr. John Doe" />
                             </div>
                             <div className="space-y-1.5">
                                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address</label>
-                                <input type="email" required value={form.email} onChange={e => setForm({...form, email: e.target.value})}
+                                <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
                                     className="block w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 dark:text-white transition-all outline-none text-slate-700 text-sm"
                                     placeholder="doctor@hospital.org" />
                             </div>
@@ -97,14 +97,14 @@ export default function Contact() {
 
                         <div className="space-y-1.5">
                             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Subject</label>
-                            <input type="text" required value={form.subject} onChange={e => setForm({...form, subject: e.target.value})}
+                            <input type="text" required value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })}
                                 className="block w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 dark:text-white transition-all outline-none text-slate-700 text-sm"
                                 placeholder="How can we help?" />
                         </div>
 
                         <div className="space-y-1.5">
                             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Message</label>
-                            <textarea required rows={5} value={form.message} onChange={e => setForm({...form, message: e.target.value})}
+                            <textarea required rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })}
                                 className="block w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 dark:text-white transition-all outline-none text-slate-700 text-sm resize-none"
                                 placeholder="Provide detailed information about your inquiry..." />
                         </div>
