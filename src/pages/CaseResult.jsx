@@ -397,7 +397,7 @@ export default function CaseResult() {
                         {/* Image Viewer Container */}
                         <div className="relative aspect-[4/3] flex items-center justify-center bg-black">
                             <AnimatePresence mode="wait">
-                                <div className="relative max-h-full max-w-full flex items-center justify-center">
+                                <div className="relative max-h-full max-w-full w-fit h-fit mx-auto">
                                     {currentBaseImageUrl && (
                                         <motion.img
                                             key={viewMode === 'cutout' ? 'cutout' : 'original'}
@@ -407,7 +407,7 @@ export default function CaseResult() {
                                             animate={{ opacity: 1 }}
                                             exit={{ opacity: 0 }}
                                             transition={{ duration: 0.4 }}
-                                            className="max-h-[75vh] sm:max-h-full max-w-full w-auto h-auto block pointer-events-none"
+                                            className="max-h-[70vh] sm:max-h-[80vh] md:max-h-full max-w-full w-auto h-auto block pointer-events-none"
                                         />
                                     )}
                                     
@@ -418,7 +418,7 @@ export default function CaseResult() {
                                             animate={{ opacity: 1 }}
                                             exit={{ opacity: 0 }}
                                             transition={{ duration: 0.5 }}
-                                            className="absolute inset-0 w-full h-full"
+                                            className="absolute inset-0"
                                         >
                                             <img
                                                 src={gradCamUrl}
