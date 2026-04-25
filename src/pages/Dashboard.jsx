@@ -36,12 +36,19 @@ export default function Dashboard() {
             const allCases = casesRes.data || [];
 
             // 3. Calculate "Validator Accuracy": (Approved / (Approved + Denied))
-            const reviewedCases = allCases.filter(c => c.status === 'Validated' || c.status === 'Denied');
-            const validatedCount = reviewedCases.filter(c => c.status === 'Validated').length;
+            const reviewedCases = allCases.filter(c => {
+                const s = c.status?.toLowerCase();
+                return s === 'validated' || s === 'denied';
+            });
+
+            const validatedCount = reviewedCases.filter(c => 
+                c.status?.toLowerCase() === 'validated'
+            ).length;
             
             let calculatedRate = "0%";
             if (reviewedCases.length > 0) {
-                calculatedRate = `${((validatedCount / reviewedCases.length) * 100).toFixed(0)}%`;
+                const rateVal = (validatedCount / reviewedCases.length) * 100;
+                calculatedRate = `${Math.round(rateVal)}%`;
             }
 
             return {
