@@ -79,13 +79,13 @@ export default function CaseResult() {
         };
 
         loadAllSecureImages();
-        
+
         return () => {
             if (secureImages.base) URL.revokeObjectURL(secureImages.base);
             if (secureImages.gradcam) URL.revokeObjectURL(secureImages.gradcam);
             if (secureImages.cutout) URL.revokeObjectURL(secureImages.cutout);
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [caseData]);
 
     if (isLoading) return (
@@ -144,16 +144,20 @@ export default function CaseResult() {
 
     // Genuine Backend XAI Metrics
     // Convert 0-1 values back into percentages
-    const confScore = caseData.confidence_score != null ? (caseData.confidence_score * 100).toFixed(1) : "0.0";
-    const healthScore = caseData.confidence_score != null ? ((1.0 - caseData.confidence_score) * 100).toFixed(1) : "0.0";
+    // If the result is "No Pneumonia", the confidence score represents the probability of being healthy.
+    const rawConf = caseData.confidence_score != null ? caseData.confidence_score : 0;
+    
+    // Assign values based on the actual result
+    const pneumoniaVal = isPneumonia ? (rawConf * 100).toFixed(1) : ((1.0 - rawConf) * 100).toFixed(1);
+    const healthyVal = isPneumonia ? ((1.0 - rawConf) * 100).toFixed(1) : (rawConf * 100).toFixed(1);
     const lungArea = caseData.lung_area_percentage != null ? caseData.lung_area_percentage.toFixed(1) : "N/A";
     const gatekeeper = caseData.gatekeeper_score != null ? (caseData.gatekeeper_score * 100).toFixed(1) : "N/A";
 
     const explainabilityMetrics = [
-        { label: "Pneumonia Confidence", value: confScore, color: "bg-rose-500" },
-        { label: "Healthy Lung Probability", value: healthScore, color: "bg-emerald-500" },
-        { label: "Isolated Lung Territory", value: lungArea, color: "bg-violet-500" },
-        { label: "Gatekeeper Validation", value: gatekeeper, color: "bg-blue-500" }
+        { label: "Pneumonia Confidence", value: isNaN(parseFloat(pneumoniaVal)) ? 0 : parseFloat(pneumoniaVal), color: "bg-rose-500" },
+        { label: "Healthy Lung Probability", value: isNaN(parseFloat(healthyVal)) ? 0 : parseFloat(healthyVal), color: "bg-emerald-500" },
+        { label: "Isolated Lung Territory", value: isNaN(parseFloat(lungArea)) ? 0 : parseFloat(lungArea), color: "bg-violet-500" },
+        { label: "Gatekeeper Validation", value: isNaN(parseFloat(gatekeeper)) ? 0 : parseFloat(gatekeeper), color: "bg-blue-500" }
     ];
 
 
@@ -161,7 +165,7 @@ export default function CaseResult() {
     const imageUrl = secureImages.base;
     const gradCamUrl = secureImages.gradcam;
     const cutoutUrl = secureImages.cutout;
-    
+
     // Determine which base image to show
     const currentBaseImageUrl = (viewMode === 'cutout' && cutoutUrl) ? cutoutUrl : imageUrl;
 
@@ -197,7 +201,7 @@ export default function CaseResult() {
 
     const handleAskAI = () => {
         const patientId = caseData.patient?.patient_uid || caseData.patient_id || "Unknown Patient";
-        const promptParams = id === 'temporary' 
+        const promptParams = id === 'temporary'
             ? `I am currently viewing a temporary Case for patient ${patientId}. The analysis resulted in a diagnosis of "${caseData.ai_result}" with a confidence score of ${(caseData.confidence_score * 100).toFixed(1)}%. Can you provide a clinical summary of what this means and suggest very general next steps?`
             : `I am currently viewing Case #${id} for patient ${patientId}. Can you provide a clinical summary of this specific scan and their history?`;
 
@@ -213,17 +217,17 @@ export default function CaseResult() {
         try {
             // Priority: Heatmapped image (Grad-CAM) if available, otherwise original base image
             const downloadUrl = gradCamUrl || imageUrl;
-            
+
             const response = await fetch(downloadUrl);
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            
+
             // Generate filename based on what we're downloading
             const typeSuffix = gradCamUrl ? '_XAI' : '';
             const filename = `PNEUMOSCAN_${id}${typeSuffix}.png`;
-            
+
             link.setAttribute('download', filename);
             document.body.appendChild(link);
             link.click();
@@ -241,13 +245,13 @@ export default function CaseResult() {
         if (id === 'temporary') return;
         setIsSavingValidation(true);
         try {
-            await api.put(`/cases/${id}`, { 
+            await api.put(`/cases/${id}`, {
                 clinical_notes: notes,
                 status: 'Validated'
             });
             alert("Case validated and approved successfully.");
             // Refetch to update status UI
-            window.location.reload(); 
+            window.location.reload();
         } catch (err) {
             console.error("Approve Validation failed:", err);
             alert("Failed to approve validation.");
@@ -260,7 +264,7 @@ export default function CaseResult() {
         if (id === 'temporary') return;
         setIsSavingValidation(true);
         try {
-            await api.put(`/cases/${id}`, { 
+            await api.put(`/cases/${id}`, {
                 clinical_notes: notes,
                 status: 'Denied'
             });
@@ -343,11 +347,10 @@ export default function CaseResult() {
                         <button
                             onClick={caseData.is_demo ? undefined : handleAskAI}
                             disabled={caseData.is_demo}
-                            className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm text-sm ${
-                                caseData.is_demo 
-                                ? 'bg-violet-600/50 text-white/70 cursor-not-allowed border border-transparent' 
-                                : 'bg-violet-600 hover:bg-violet-700 text-white hover:shadow-md hover:-translate-y-0.5 border border-transparent'
-                            }`}
+                            className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm text-sm ${caseData.is_demo
+                                    ? 'bg-violet-600/50 text-white/70 cursor-not-allowed border border-transparent'
+                                    : 'bg-violet-600 hover:bg-violet-700 text-white hover:shadow-md hover:-translate-y-0.5 border border-transparent'
+                                }`}
                         >
                             <Bot className="h-4 w-4" />
                             <span className="hidden xs:inline">Ask </span>AI Assistant
@@ -406,10 +409,10 @@ export default function CaseResult() {
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                         transition={{ duration: 0.4 }}
-                                        className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                                        className={`absolute inset-0 w-full h-full pointer-events-none ${viewMode === 'cutout' ? 'object-cover scale-[1.1]' : 'object-contain'}`}
                                     />
                                 )}
-                                
+
                                 {showGradCam && gradCamUrl && (
                                     <motion.div
                                         key="heatmap-container"
@@ -426,30 +429,30 @@ export default function CaseResult() {
                                             style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
                                         />
 
-                                            {/* Scrubber Line */}
-                                            <div
-                                                className="absolute top-0 bottom-0 w-0.5 sm:w-1 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] pointer-events-none z-10"
-                                                style={{ left: `calc(${scrubberValue}% - 1px)` }}
-                                            >
-                                                <div className="absolute top-1/2 left-1/2 -ml-3 -mt-3 w-6 h-6 bg-white rounded-full shadow-lg hidden sm:flex items-center justify-center">
-                                                    <div className="w-4 h-4 rounded-full border border-slate-200 flex items-center justify-center gap-[1px]">
-                                                        <div className="w-[1px] h-2 bg-slate-400"></div>
-                                                        <div className="w-[1px] h-2 bg-slate-400"></div>
-                                                    </div>
+                                        {/* Scrubber Line */}
+                                        <div
+                                            className="absolute top-0 bottom-0 w-0.5 sm:w-1 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] pointer-events-none z-10"
+                                            style={{ left: `calc(${scrubberValue}% - 1px)` }}
+                                        >
+                                            <div className="absolute top-1/2 left-1/2 -ml-3 -mt-3 w-6 h-6 bg-white rounded-full shadow-lg hidden sm:flex items-center justify-center">
+                                                <div className="w-4 h-4 rounded-full border border-slate-200 flex items-center justify-center gap-[1px]">
+                                                    <div className="w-[1px] h-2 bg-slate-400"></div>
+                                                    <div className="w-[1px] h-2 bg-slate-400"></div>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            {/* Drag scrubber (invisible overlay) */}
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                value={scrubberValue}
-                                                onChange={(e) => setScrubberValue(parseInt(e.target.value, 10))}
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 hidden sm:block"
-                                            />
-                                        </motion.div>
-                                    )}
+                                        {/* Drag scrubber (invisible overlay) */}
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value={scrubberValue}
+                                            onChange={(e) => setScrubberValue(parseInt(e.target.value, 10))}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 hidden sm:block"
+                                        />
+                                    </motion.div>
+                                )}
                             </AnimatePresence>
 
                             {/* Overlay Controls */}
@@ -664,11 +667,10 @@ export default function CaseResult() {
 
                             {/* Status indicator if already validated/denied */}
                             {caseData.status !== 'Pending' && id !== 'temporary' && (
-                                <div className={`mt-4 p-4 rounded-xl border flex items-center gap-3 ${
-                                    caseData.status === 'Validated' 
-                                    ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400' 
-                                    : 'bg-rose-50 dark:bg-rose-900/20 border-rose-100 dark:border-rose-800 text-rose-700 dark:text-rose-400'
-                                }`}>
+                                <div className={`mt-4 p-4 rounded-xl border flex items-center gap-3 ${caseData.status === 'Validated'
+                                        ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400'
+                                        : 'bg-rose-50 dark:bg-rose-900/20 border-rose-100 dark:border-rose-800 text-rose-700 dark:text-rose-400'
+                                    }`}>
                                     {caseData.status === 'Validated' ? <CheckCircle className="h-5 w-5" /> : <ShieldAlert className="h-5 w-5" />}
                                     <div className="text-sm font-bold">
                                         Clinical Oversight: {caseData.status === 'Validated' ? 'Approved' : 'Denied'}
@@ -688,7 +690,7 @@ export default function CaseResult() {
                     <AnimatePresence>
                         {showDenyConfirm && (
                             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                                <motion.div 
+                                <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
@@ -724,7 +726,7 @@ export default function CaseResult() {
                                             Yes, Deny
                                         </button>
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={() => setShowDenyConfirm(false)}
                                         className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
                                     >
