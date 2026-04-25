@@ -9,7 +9,11 @@ import { usePageTitle } from '../hooks/usePageTitle';
 const DEMO_IMAGE_URL = '/demo.png';
 
 export default function DemoPage() {
-    usePageTitle(null, 'Interactive Demo | PNEUMOSCAN AI');
+    usePageTitle(
+        null, 
+        'Try the PNEUMOSCAN interactive demo. Experience our AI analysis speed, Grad-CAM explainability heatmaps, and clinical dashboard interface in a secure live sandbox.',
+        'Interactive Demo | PNEUMOSCAN AI'
+    );
     const [files, setFiles] = useState([]);
     const [patientId, setPatientId] = useState('');
     const [isTemporary] = useState(true); // Demo is always temporary

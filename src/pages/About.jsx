@@ -5,7 +5,11 @@ import { ShieldCheck, Brain, Zap, User, Users, Globe, Building, Award, CheckCirc
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function About() {
-    usePageTitle(null, 'About Us | PNEUMOSCAN AI');
+    usePageTitle(
+        null, 
+        'Learn about PNEUMOSCAN, the clinical-grade AI platform for pneumonia detection. Founded by radiologists and engineers to eliminate diagnostic delays in emergency settings.',
+        'About Us | PNEUMOSCAN AI'
+    );
     const { setShowLoginModal } = useOutletContext();
 
     return (

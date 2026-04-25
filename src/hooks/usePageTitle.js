@@ -1,23 +1,37 @@
 import { useEffect } from 'react';
 
 /**
- * Custom hook to set the document title dynamically per route.
+ * Custom hook to set the document title and meta description dynamically per route.
  * Appends " | PNEUMOSCAN" suffix so every page has a consistent brand signal.
  *
  * @param {string} title - Page-specific title (e.g. "Dashboard")
+ * @param {string} [description] - Optional: unique meta description for the page
  * @param {string} [fullTitle] - Optional: override the full title without appending the suffix
  */
-export function usePageTitle(title, fullTitle) {
+export function usePageTitle(title, description, fullTitle) {
     useEffect(() => {
         const previousTitle = document.title;
+        const previousDescription = document.querySelector('meta[name="description"]')?.getAttribute('content');
 
+        // 1. Update Title
         if (fullTitle) {
             document.title = fullTitle;
         } else {
             document.title = title ? `${title} | PNEUMOSCAN` : 'PNEUMOSCAN | AI-Powered Pneumonia Detection Platform';
         }
 
-        // Dynamically insert/update Canonical Link
+        // 2. Update Meta Description
+        if (description) {
+            let metaDescription = document.querySelector('meta[name="description"]');
+            if (!metaDescription) {
+                metaDescription = document.createElement('meta');
+                metaDescription.setAttribute('name', 'description');
+                document.head.appendChild(metaDescription);
+            }
+            metaDescription.setAttribute('content', description);
+        }
+
+        // 3. Update Canonical Link
         let canonicalLink = document.querySelector("link[rel='canonical']");
         if (!canonicalLink) {
             canonicalLink = document.createElement("link");
@@ -26,11 +40,15 @@ export function usePageTitle(title, fullTitle) {
         }
         canonicalLink.setAttribute("href", `https://pneumoscan.com${window.location.pathname}`);
 
-        // Restore on unmount (good practice for modals or nested routes)
+        // Restore on unmount
         return () => {
             document.title = previousTitle;
+            if (previousDescription) {
+                const metaDescription = document.querySelector('meta[name="description"]');
+                if (metaDescription) metaDescription.setAttribute('content', previousDescription);
+            }
         };
-    }, [title, fullTitle]);
+    }, [title, description, fullTitle]);
 }
 
 export default usePageTitle;

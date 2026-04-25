@@ -4,7 +4,11 @@ import { Mail, Phone, MapPin, Send, CheckCircle, MessageSquare } from 'lucide-re
 import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Contact() {
-    usePageTitle(null, 'Contact Us | PNEUMOSCAN AI');
+    usePageTitle(
+        null, 
+        'Get in touch with PNEUMOSCAN for clinical support, hospital partnerships, and API integration inquiries. Our medical sales team is ready to assist you with AI diagnostic implementation.',
+        'Contact Us | PNEUMOSCAN AI'
+    );
     const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
     const [status, setStatus] = useState('idle'); // idle | submitting | success
 

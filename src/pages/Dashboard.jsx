@@ -8,7 +8,10 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import { useAuth } from '../context/AuthContext';
 
 export default function Dashboard() {
-    usePageTitle('Dashboard');
+    usePageTitle(
+        'Dashboard',
+        'Access the PNEUMOSCAN clinical dashboard for a comprehensive overview of pneumonia detection statistics, recent case analyses, and real-time system performance metrics.'
+    );
     const { user } = useAuth();
     const [showVerifiedBanner, setShowVerifiedBanner] = useState(false);
 
