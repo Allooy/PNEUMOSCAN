@@ -393,7 +393,9 @@ export default function CaseResult() {
                     transition={{ delay: 0.2 }}
                     className="lg:col-span-2 space-y-4"
                 >
-                        <div className="relative aspect-[4/3] flex items-center justify-center bg-black overflow-hidden group">
+                    <div className="bg-slate-900 rounded-3xl shadow-2xl overflow-hidden relative group border border-slate-800">
+                        {/* Image Viewer Container */}
+                        <div className="relative aspect-[4/3] flex items-center justify-center bg-black">
                             <AnimatePresence mode="wait">
                                 <div className="relative max-h-full max-w-full flex items-center justify-center">
                                     {currentBaseImageUrl && (
@@ -425,7 +427,7 @@ export default function CaseResult() {
                                                 style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
                                             />
 
-                                            {/* Scrubber Line — visible on all screens */}
+                                            {/* Scrubber Line */}
                                             <div
                                                 className="absolute top-0 bottom-0 w-0.5 sm:w-1 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] pointer-events-none z-10"
                                                 style={{ left: `calc(${scrubberValue}% - 1px)` }}
@@ -438,7 +440,7 @@ export default function CaseResult() {
                                                 </div>
                                             </div>
 
-                                            {/* Drag scrubber — desktop (invisible overlay) */}
+                                            {/* Drag scrubber (invisible overlay) */}
                                             <input
                                                 type="range"
                                                 min="0"
@@ -460,9 +462,8 @@ export default function CaseResult() {
                             </div>
                         </div>
 
-                        {/* Controls */}
+                        {/* Controls Bar */}
                         <div className="p-3 sm:p-4 bg-slate-900/90 backdrop-blur border-t border-slate-800 space-y-3">
-                            {/* Mobile GradCAM slider — always visible on small screens */}
                             {showGradCam && gradCamUrl && (
                                 <div className="sm:hidden flex items-center gap-3 px-1">
                                     <span className="text-xs text-slate-400 shrink-0">0%</span>
@@ -499,24 +500,20 @@ export default function CaseResult() {
                                             } disabled:opacity-50 disabled:cursor-not-allowed`}
                                     >
                                         <Activity className="h-3.5 w-3.5" />
-                                        <span className="hidden xs:inline">{viewMode === 'cutout' ? 'Isolated View' : 'Original View'}</span>
-                                        <span className="xs:hidden">{viewMode === 'cutout' ? 'Isolated' : 'Original'}</span>
+                                        <span>{viewMode === 'cutout' ? 'Isolated View' : 'Original View'}</span>
                                     </button>
                                 </div>
                                 <button
                                     onClick={handleDownloadImage}
                                     disabled={isDownloadingDicom || id === 'temporary'}
-                                    title={id === 'temporary' ? 'Not available for temporary scans' : 'Download high-fidelity diagnostic image'}
-                                    className="flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 transition-colors text-xs font-bold disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-300 transition-colors text-xs font-bold disabled:opacity-40"
                                 >
                                     <Download className="h-3.5 w-3.5" />
-                                    <span className="hidden sm:inline">{isDownloadingDicom ? 'Downloading...' : (gradCamUrl ? 'Download High-Res XAI' : 'Download Original')}</span>
-                                    <span className="sm:hidden">{isDownloadingDicom ? '...' : 'Download'}</span>
+                                    <span>{isDownloadingDicom ? 'Downloading...' : (gradCamUrl ? 'Download High-Res XAI' : 'Download Original')}</span>
                                 </button>
                             </div>
                         </div>
                     </div>
-
 
                     {/* Legend */}
                     {showGradCam && (
@@ -539,6 +536,7 @@ export default function CaseResult() {
                         </motion.div>
                     )}
                 </motion.div>
+
 
                 {/* Sidebar Info */}
                 <motion.div
