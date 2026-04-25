@@ -393,61 +393,63 @@ export default function CaseResult() {
                     transition={{ delay: 0.2 }}
                     className="lg:col-span-2 space-y-4"
                 >
-                    <div className="bg-slate-900 rounded-3xl shadow-2xl overflow-hidden relative group border border-slate-800">
-                        {/* Image Combine */}
-                        <div className="relative aspect-[4/3] flex items-center justify-center bg-black">
-                            <AnimatePresence>
-                                {currentBaseImageUrl && (
-                                    <motion.img
-                                        key="base-image"
-                                        src={currentBaseImageUrl}
-                                        alt="CXR Base"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ duration: 0.5 }}
-                                        className="absolute inset-0 w-full h-full object-contain"
-                                    />
-                                )}
-                            {showGradCam && gradCamUrl && (
-                                    <motion.div
-                                        key="heatmap-container"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 0.5 }}
-                                        className="absolute inset-0 w-full h-full"
-                                    >
-                                        <img
-                                            src={gradCamUrl}
-                                            alt="Grad-CAM Overlay"
-                                            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen opacity-70"
-                                            style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
+                        <div className="relative aspect-[4/3] flex items-center justify-center bg-black overflow-hidden group">
+                            <AnimatePresence mode="wait">
+                                <div className="relative max-h-full max-w-full flex items-center justify-center">
+                                    {currentBaseImageUrl && (
+                                        <motion.img
+                                            key={viewMode === 'cutout' ? 'cutout' : 'original'}
+                                            src={currentBaseImageUrl}
+                                            alt="CXR Base"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.4 }}
+                                            className="max-h-[75vh] sm:max-h-full max-w-full w-auto h-auto block pointer-events-none"
                                         />
-
-                                        {/* Scrubber Line — visible on all screens */}
-                                        <div
-                                            className="absolute top-0 bottom-0 w-0.5 sm:w-1 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] pointer-events-none z-10"
-                                            style={{ left: `calc(${scrubberValue}% - 1px)` }}
+                                    )}
+                                    
+                                    {showGradCam && gradCamUrl && (
+                                        <motion.div
+                                            key="heatmap-container"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.5 }}
+                                            className="absolute inset-0 w-full h-full"
                                         >
-                                            <div className="absolute top-1/2 left-1/2 -ml-3 -mt-3 w-6 h-6 bg-white rounded-full shadow-lg hidden sm:flex items-center justify-center">
-                                                <div className="w-4 h-4 rounded-full border border-slate-200 flex items-center justify-center gap-[1px]">
-                                                    <div className="w-[1px] h-2 bg-slate-400"></div>
-                                                    <div className="w-[1px] h-2 bg-slate-400"></div>
+                                            <img
+                                                src={gradCamUrl}
+                                                alt="Grad-CAM Overlay"
+                                                className="w-full h-full object-fill pointer-events-none mix-blend-screen opacity-70"
+                                                style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
+                                            />
+
+                                            {/* Scrubber Line — visible on all screens */}
+                                            <div
+                                                className="absolute top-0 bottom-0 w-0.5 sm:w-1 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] pointer-events-none z-10"
+                                                style={{ left: `calc(${scrubberValue}% - 1px)` }}
+                                            >
+                                                <div className="absolute top-1/2 left-1/2 -ml-3 -mt-3 w-6 h-6 bg-white rounded-full shadow-lg hidden sm:flex items-center justify-center">
+                                                    <div className="w-4 h-4 rounded-full border border-slate-200 flex items-center justify-center gap-[1px]">
+                                                        <div className="w-[1px] h-2 bg-slate-400"></div>
+                                                        <div className="w-[1px] h-2 bg-slate-400"></div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        {/* Drag scrubber — desktop (invisible overlay) */}
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="100"
-                                            value={scrubberValue}
-                                            onChange={(e) => setScrubberValue(parseInt(e.target.value, 10))}
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 hidden sm:block"
-                                        />
-                                    </motion.div>
-                                )}
+                                            {/* Drag scrubber — desktop (invisible overlay) */}
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="100"
+                                                value={scrubberValue}
+                                                onChange={(e) => setScrubberValue(parseInt(e.target.value, 10))}
+                                                className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 hidden sm:block"
+                                            />
+                                        </motion.div>
+                                    )}
+                                </div>
                             </AnimatePresence>
 
                             {/* Overlay Controls */}
