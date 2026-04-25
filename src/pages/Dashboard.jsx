@@ -27,34 +27,8 @@ export default function Dashboard() {
     const { data: stats } = useQuery({
         queryKey: ['dashboard-stats'],
         queryFn: async () => {
-            // 1. Fetch current basic stats
-            const statsRes = await api.get('/cases/stats');
-            const statsData = statsRes.data;
-
-            // 2. Fetch full case list to calculate precise Clinically Validated accuracy
-            const casesRes = await api.get('/cases/');
-            const allCases = casesRes.data || [];
-
-            // 3. Calculate "Validator Accuracy": (Approved / (Approved + Denied))
-            const reviewedCases = allCases.filter(c => {
-                const s = c.status?.toLowerCase();
-                return s === 'validated' || s === 'denied';
-            });
-
-            const validatedCount = reviewedCases.filter(c => 
-                c.status?.toLowerCase() === 'validated'
-            ).length;
-            
-            let calculatedRate = "0%";
-            if (reviewedCases.length > 0) {
-                const rateVal = (validatedCount / reviewedCases.length) * 100;
-                calculatedRate = `${Math.round(rateVal)}%`;
-            }
-
-            return {
-                ...statsData,
-                validationRate: calculatedRate
-            };
+            const response = await api.get('/cases/stats');
+            return response.data;
         }
     });
 
