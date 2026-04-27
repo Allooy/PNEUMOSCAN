@@ -398,22 +398,23 @@ export default function CaseResult() {
                 >
                     <div className="bg-slate-900 rounded-3xl shadow-2xl overflow-hidden relative group border border-slate-800">
                         {/* Image Viewer Container */}
-                        <div className="relative aspect-[4/3] bg-black overflow-hidden group flex items-center justify-center p-2 sm:p-4">
-                            <AnimatePresence mode="wait">
-                                {currentBaseImageUrl && (
-                                    <motion.div
-                                        key={viewMode === 'cutout' ? 'cutout' : 'original'}
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 0.4 }}
-                                        className="relative inline-flex items-center justify-center max-w-full max-h-full"
-                                    >
-                                        <img
-                                            src={currentBaseImageUrl}
-                                            alt="CXR Base"
-                                            className="block max-w-full max-h-full object-contain pointer-events-none"
-                                        />
+                        <div className="relative aspect-[4/3] bg-black overflow-hidden group">
+                            <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-4">
+                                <AnimatePresence mode="wait">
+                                    {currentBaseImageUrl && (
+                                        <motion.div
+                                            key={viewMode === 'cutout' ? 'cutout' : 'original'}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.4 }}
+                                            className={`relative inline-flex items-center justify-center max-w-full max-h-full transition-transform duration-500 ${viewMode === 'cutout' ? 'scale-[1.4]' : 'scale-100'}`}
+                                        >
+                                            <img
+                                                src={currentBaseImageUrl}
+                                                alt="CXR Base"
+                                                className="block max-w-full max-h-full object-contain pointer-events-none"
+                                            />
 
                                         {showGradCam && gradCamUrl && (
                                             <div className="absolute inset-0">
@@ -450,8 +451,8 @@ export default function CaseResult() {
                                         )}
                                     </motion.div>
                                 )}
-                            </AnimatePresence>
-
+                                </AnimatePresence>
+                            </div>
                             {/* Overlay Controls */}
                             <div className="absolute top-4 right-4 flex gap-2 z-30 pointer-events-none">
                                 <span className="bg-black/50 backdrop-blur-md text-white/80 text-xs px-3 py-1 rounded-full border border-white/10">
