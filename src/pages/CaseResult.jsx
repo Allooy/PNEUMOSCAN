@@ -413,7 +413,7 @@ export default function CaseResult() {
                                             <img
                                                 src={currentBaseImageUrl}
                                                 alt="CXR Base"
-                                                className="block max-w-full max-h-full object-contain pointer-events-none"
+                                                className="block w-auto h-auto max-w-full max-h-full pointer-events-none"
                                             />
 
                                         {showGradCam && gradCamUrl && (
