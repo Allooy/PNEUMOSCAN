@@ -50,7 +50,7 @@ export default function About() {
                 <div className="flex flex-col md:flex-row gap-12 items-center">
                     <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="md:w-1/2 relative">
                         <div className="w-full aspect-square md:aspect-[4/3] bg-slate-900 rounded-3xl overflow-hidden relative shadow-2xl p-6 ring-1 ring-white/10 flex flex-col justify-between">
-                            <div className="absolute right-0 top-0 w-64 h-64 bg-violet-600/30 blur-[80px] rounded-full pointer-events-none" />
+                            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at top right, rgba(124, 58, 237, 0.3) 0%, transparent 60%)' }} />
 
                             <div>
                                 <Brain className="h-10 w-10 text-violet-400 mb-4" />
