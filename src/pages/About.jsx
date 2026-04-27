@@ -6,9 +6,9 @@ import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function About() {
     usePageTitle(
-        null, 
-        'Learn about PNEUMOSCAN, the clinical-grade AI platform for pneumonia detection. Founded by radiologists and engineers to eliminate diagnostic delays in emergency settings.',
-        'About Us | PNEUMOSCAN AI'
+        null,
+        'Learn about PNEUMOSCAN, the clinical-grade AI platform for pneumonia detection. Built and developed by Ali Mashkhas to eliminate diagnostic delays in emergency settings. ',
+        'About | PNEUMOSCAN AI'
     );
     const { setShowLoginModal } = useOutletContext();
 
@@ -21,7 +21,7 @@ export default function About() {
                         <Award className="h-4 w-4" /> Leading the Future of Radiology
                     </div>
                     <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight mb-6">
-                        We are building the <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-cyan-500">Clinical Standard</span> for AI diagnostics.
+                        Setting the <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-cyan-500">Clinical Standard</span> for AI diagnostics.
                     </h1>
                     <p className="text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed">
                         PNEUMOSCAN was founded with a singular mission: to eliminate diagnostic delays in critical lung conditions using state-of-the-art deep learning architecture.
@@ -31,9 +31,9 @@ export default function About() {
                 {/* Animated Stats */}
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2, duration: 0.5 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
                     {[
-                        { label: 'Accuracy', value: '98.5%', suffix: '', color: 'text-violet-600 dark:text-violet-400' },
-                        { label: 'Scans Processed', value: '1.2', suffix: 'M+', color: 'text-cyan-600 dark:text-cyan-400' },
-                        { label: 'Hospitals', value: '350', suffix: '+', color: 'text-emerald-600 dark:text-emerald-400' },
+                        { label: 'Accuracy', value: 'Proven', suffix: '', color: 'text-violet-600 dark:text-violet-400' },
+                        { label: 'Scans Processed', value: '321', suffix: '+', color: 'text-cyan-600 dark:text-cyan-400' },
+                        { label: 'Hospitals', value: '2', suffix: '', color: 'text-emerald-600 dark:text-emerald-400' },
                         { label: 'Average Speed', value: '<2.5', suffix: 's', color: 'text-amber-600 dark:text-amber-400' },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none flex flex-col items-center justify-center relative overflow-hidden group">
@@ -51,7 +51,7 @@ export default function About() {
                     <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="md:w-1/2 relative">
                         <div className="w-full aspect-square md:aspect-[4/3] bg-slate-900 rounded-3xl overflow-hidden relative shadow-2xl p-6 ring-1 ring-white/10 flex flex-col justify-between">
                             <div className="absolute right-0 top-0 w-64 h-64 bg-violet-600/30 blur-[80px] rounded-full pointer-events-none" />
-                            
+
                             <div>
                                 <Brain className="h-10 w-10 text-violet-400 mb-4" />
                                 <h3 className="text-2xl font-bold text-white mb-2">DenseNet121 Architecture</h3>
@@ -76,7 +76,7 @@ export default function About() {
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="md:w-1/2">
-                        <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">Designed by Clinicians, <br/>Engineered for Scale.</h2>
+                        <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">Designed For Clinicians, <br />Engineered for Scale.</h2>
                         <div className="space-y-6">
                             {[
                                 { title: 'Eliminating Wait Times', desc: 'In emergency settings, every minute counts. Our AI acts as an instant second reader, highlighting potential anomalies before the radiologist even opens the scan.' },
@@ -99,17 +99,15 @@ export default function About() {
             {/* Leadership Team */}
             <section className="py-16 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Advisory Board & Leadership</h2>
-                    <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Guided by leading experts in pulmonary medicine, radiology, and artificial intelligence.</p>
+                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Founder & Developer</h2>
+                    <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Built from the ground up with a focus on medical precision and system security.</p>
                 </div>
 
-                <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+                <div className="flex justify-center">
                     {[
-                        { name: 'Dr. Sarah Chen, MD', role: 'Chief Medical Officer', icon: <User className="h-10 w-10 text-violet-500" />, desc: 'Board-certified radiologist with 15+ years experience. Former Head of Imaging at Mass General.' },
-                        { name: 'Marcus Torres', role: 'Chief Technology Officer', icon: <Users className="h-10 w-10 text-cyan-500" />, desc: 'Ex-Google Brain researcher specializing in applied computer vision for healthcare diagnostics.' },
-                        { name: 'Dr. Elena Rostova', role: 'Head of Clinical AI', icon: <Brain className="h-10 w-10 text-amber-500" />, desc: 'PhD in Biomedical Engineering. Architect of our proprietary DenseNet evaluation pipeline.' },
+                        { name: 'Ali Mashkhas', role: 'Founder & Lead Developer', icon: <User className="h-10 w-10 text-violet-500" />, desc: "Final year Cybersecurity with computer science student. Built the entire PNEUMOSCAN platform from the ground up, combining expertise in neural networks and secure systems." },
                     ].map((member, i) => (
-                        <motion.div key={i} whileHover={{ y: -5 }} className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none relative group overflow-hidden">
+                        <motion.div key={i} whileHover={{ y: -5 }} className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none relative group overflow-hidden max-w-xl w-full">
                             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity duration-300 group-hover:scale-110 transform">
                                 {member.icon}
                             </div>

@@ -147,7 +147,7 @@ function InteractiveHero() {
                 className="absolute top-4 left-4 z-20 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-3 rounded-2xl shadow-2xl shadow-black/40 border border-white/50 dark:border-slate-700 transition-colors duration-300">
                 <div className="flex items-center gap-2.5">
                     <div className="bg-emerald-100 dark:bg-emerald-900/40 p-1.5 rounded-lg"><ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div>
-                    <div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">ACCURACY</p><p className="text-base font-bold text-slate-800 dark:text-white">98.5%</p></div>
+                    <div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">ACCURACY</p><p className="text-base font-bold text-slate-800 dark:text-white">Clinically Proven</p></div>
                 </div>
             </motion.div>
             <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut', delay: 1 }}

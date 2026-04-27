@@ -47,9 +47,9 @@ export default function Contact() {
                 {/* Contact Info Cards */}
                 <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="lg:w-1/3 flex flex-col gap-6">
                     {[
-                        { icon: <Mail className="h-6 w-6 text-violet-600 dark:text-violet-400" />, title: 'Email Support', desc: 'support@pneumoscan.com', subdesc: 'Usually responds within 2 hours', bg: 'bg-violet-100 dark:bg-violet-900/30' },
-                        { icon: <Phone className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />, title: 'Sales & Partnerships', desc: '+1 (800) 555-0199', subdesc: 'Mon-Fri, 9am-6pm EST', bg: 'bg-cyan-100 dark:bg-cyan-900/30' },
-                        { icon: <MapPin className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />, title: 'Headquarters', desc: '142 Innovation Way', subdesc: 'Muharraq, Kingdom of Bahrain', bg: 'bg-emerald-100 dark:bg-emerald-900/30' },
+                        { icon: <Mail className="h-6 w-6 text-violet-600 dark:text-violet-400" />, title: 'Contact Email', desc: 'ali.mishkas07@gmail.com', subdesc: 'Usually responds within 2 hours', bg: 'bg-violet-100 dark:bg-violet-900/30' },
+                        { icon: <Phone className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />, title: 'Personal Number', desc: '+973 32333919', subdesc: '', bg: 'bg-cyan-100 dark:bg-cyan-900/30' },
+                        { icon: <MapPin className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />, title: 'Headquarters', desc: 'Muharraq, Bahrain', subdesc: 'Kingdom of Bahrain', bg: 'bg-emerald-100 dark:bg-emerald-900/30' },
                     ].map((card, i) => (
                         <div key={i} className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none flex items-start gap-4 hover:-translate-y-1 transition-transform duration-300">
                             <div className={`${card.bg} p-3 rounded-2xl shrink-0`}>
