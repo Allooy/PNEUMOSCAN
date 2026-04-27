@@ -398,59 +398,56 @@ export default function CaseResult() {
                 >
                     <div className="bg-slate-900 rounded-3xl shadow-2xl overflow-hidden relative group border border-slate-800">
                         {/* Image Viewer Container */}
-                        <div className="relative aspect-[4/3] bg-black overflow-hidden group">
+                        <div className="relative aspect-[4/3] bg-black overflow-hidden group flex items-center justify-center p-2 sm:p-4">
                             <AnimatePresence mode="wait">
                                 {currentBaseImageUrl && (
-                                    <motion.img
+                                    <motion.div
                                         key={viewMode === 'cutout' ? 'cutout' : 'original'}
-                                        src={currentBaseImageUrl}
-                                        alt="CXR Base"
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                         transition={{ duration: 0.4 }}
-                                        className={`absolute inset-0 w-full h-full pointer-events-none ${viewMode === 'cutout' ? 'object-cover scale-[1.1]' : 'object-contain'}`}
-                                    />
-                                )}
-
-                                {showGradCam && gradCamUrl && (
-                                    <motion.div
-                                        key="heatmap-container"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        transition={{ duration: 0.5 }}
-                                        className="absolute inset-0 w-full h-full"
+                                        className="relative inline-flex items-center justify-center max-w-full max-h-full"
                                     >
                                         <img
-                                            src={gradCamUrl}
-                                            alt="Grad-CAM Overlay"
-                                            className="absolute inset-0 w-full h-full object-contain pointer-events-none mix-blend-screen opacity-70"
-                                            style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
+                                            src={currentBaseImageUrl}
+                                            alt="CXR Base"
+                                            className="block max-w-full max-h-full object-contain pointer-events-none"
                                         />
 
-                                        {/* Scrubber Line */}
-                                        <div
-                                            className="absolute top-0 bottom-0 w-0.5 sm:w-1 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] pointer-events-none z-10"
-                                            style={{ left: `calc(${scrubberValue}% - 1px)` }}
-                                        >
-                                            <div className="absolute top-1/2 left-1/2 -ml-3 -mt-3 w-6 h-6 bg-white rounded-full shadow-lg hidden sm:flex items-center justify-center">
-                                                <div className="w-4 h-4 rounded-full border border-slate-200 flex items-center justify-center gap-[1px]">
-                                                    <div className="w-[1px] h-2 bg-slate-400"></div>
-                                                    <div className="w-[1px] h-2 bg-slate-400"></div>
+                                        {showGradCam && gradCamUrl && (
+                                            <div className="absolute inset-0">
+                                                <img
+                                                    src={gradCamUrl}
+                                                    alt="Grad-CAM Overlay"
+                                                    className="w-full h-full object-fill pointer-events-none mix-blend-screen opacity-70"
+                                                    style={{ clipPath: `polygon(0 0, ${scrubberValue}% 0, ${scrubberValue}% 100%, 0 100%)` }}
+                                                />
+
+                                                {/* Scrubber Line */}
+                                                <div
+                                                    className="absolute top-0 bottom-0 w-0.5 sm:w-1 bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)] pointer-events-none z-10"
+                                                    style={{ left: `calc(${scrubberValue}% - 1px)` }}
+                                                >
+                                                    <div className="absolute top-1/2 left-1/2 -ml-3 -mt-3 w-6 h-6 bg-white rounded-full shadow-lg hidden sm:flex items-center justify-center">
+                                                        <div className="w-4 h-4 rounded-full border border-slate-200 flex items-center justify-center gap-[1px]">
+                                                            <div className="w-[1px] h-2 bg-slate-400"></div>
+                                                            <div className="w-[1px] h-2 bg-slate-400"></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
 
-                                        {/* Drag scrubber (invisible overlay) */}
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="100"
-                                            value={scrubberValue}
-                                            onChange={(e) => setScrubberValue(parseInt(e.target.value, 10))}
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 hidden sm:block"
-                                        />
+                                                {/* Drag scrubber (invisible overlay) */}
+                                                <input
+                                                    type="range"
+                                                    min="0"
+                                                    max="100"
+                                                    value={scrubberValue}
+                                                    onChange={(e) => setScrubberValue(parseInt(e.target.value, 10))}
+                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 hidden sm:block"
+                                                />
+                                            </div>
+                                        )}
                                     </motion.div>
                                 )}
                             </AnimatePresence>
