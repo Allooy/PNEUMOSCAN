@@ -260,7 +260,7 @@ export default function UploadPage() {
                                                         type="file"
                                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                                                         onChange={handleFileChange}
-                                                        accept="image/png, image/jpeg, image/dicom"
+                                                        accept="image/png, image/jpeg, image/webp, image/dicom, .webp"
                                                     />
 
                                                     <div className="py-6 flex flex-col items-center">

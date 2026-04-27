@@ -399,7 +399,7 @@ export default function CaseResult() {
                     <div className="bg-slate-900 rounded-3xl shadow-2xl overflow-hidden relative group border border-slate-800">
                         {/* Image Viewer Container */}
                         <div className="relative aspect-[4/3] bg-black overflow-hidden group">
-                            <div className="absolute inset-0 flex items-center justify-center p-2 sm:p-4">
+                            <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-10">
                                 <AnimatePresence mode="wait">
                                     {currentBaseImageUrl && (
                                         <motion.div
